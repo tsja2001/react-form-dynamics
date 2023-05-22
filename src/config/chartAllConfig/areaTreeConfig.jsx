@@ -1,7 +1,7 @@
 import TreeNode from '../../tree/treeNode/TreeNode'
 import { Input, Switch, Select } from 'antd'
 
-export default [
+const areaTreeConfig = [
   {
     title: (
       <TreeNode
@@ -15,11 +15,16 @@ export default [
     key: '1',
     children: [
       {
-        title: (
-          <TreeNode label="标题内容" name={['title', 'text']}>
-            <Input />
-          </TreeNode>
-        ),
+        title: (e) => {
+          console.log(e, '------------------')
+          const { disabled } = e
+          return (
+            <TreeNode label="标题内容" name={['title', 'text']}>
+              <Input disabled={disabled} />
+            </TreeNode>
+          )
+        },
+        disabled: false,
         key: '1-0',
       },
     ],
@@ -113,3 +118,5 @@ export default [
     ],
   },
 ]
+
+export default areaTreeConfig
