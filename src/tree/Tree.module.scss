@@ -1,0 +1,22 @@
+
+.content {
+  width: 300px;
+  border: 1px solid #a0a0a0;
+}
+.flex {
+  display: flex;
+  justify-content: space-between;
+	align-items: center;
+	.left{
+		padding-right: 10px;
+		box-sizing: border-box;
+	}
+  .right {
+    flex: 1;
+		text-align: right;
+  }
+}
+
+.form_item {
+  all: unset;
+}
