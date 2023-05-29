@@ -1,5 +1,5 @@
 import { Line } from '@ant-design/charts'
-import { lineData, lineSeriseData } from '../data/line'
+import { lineSeriseData } from '../data/line'
 
 export const Charts = () => {
   const config = {

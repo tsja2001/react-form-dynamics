@@ -10,6 +10,7 @@ import Dnd from './dnd/Dnd.jsx'
 
 import 'react-grid-layout/css/styles.css'
 import MyChart from './dnd/myChart/MyChart.jsx'
+import DndByGPT from './dnd/DndByGPT.jsx'
 // import Grid2 from './dnd/grid2/Grid2.jsx'
 // import 'react-resizable/css/styles.css'
 
@@ -32,11 +33,20 @@ const router = createBrowserRouter([
   },
   {
     path: '/dnd',
-    element: <Dnd />,
+    element: (
+      <>
+        {/* <Dnd /> */}
+        <DndByGPT />
+      </>
+    ),
   },
   {
     path: '/myChart',
-    element: <MyChart />,
+    element: (
+      <>
+        <MyChart />,
+      </>
+    ),
   },
 ])
 

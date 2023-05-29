@@ -1,10 +1,10 @@
-import { memo, useRef, useState } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
 import { chartDataList } from './chartDataList'
 import style from './Dnd.module.scss'
 
 const Dnd = () => {
   const dragData = useRef(null)
-  const dropIndex = useRef(null)
+  const currentActionType = useRef(null)
 
   const [itemList, setItemList] = useState([
     {
@@ -12,33 +12,48 @@ const Dnd = () => {
       name: 'Chart 1',
     },
   ])
-
+  // 开始拖拽
   function handleDragStart(event, data) {
     dragData.current = data
   }
 
-  function handleDragOver(event, index) {
+  // 拖拽过程中
+  function handleDragOver(event) {
     event.preventDefault()
-    dropIndex.current = index
+
+    const target = event.target
+    if (target.classList.contains(style.grid)) {
+      // 当前鼠标在父容器元素上
+      // console.log('拖动到父容器元素上')
+      currentActionType.current = 'parent'
+    } else if (target.classList.contains(style.grid_item)) {
+      // 当前鼠标在子元素上
+      // console.log('拖动到子元素上')
+      currentActionType.current = 'item'
+    }
   }
 
-  function handleDrop(event) {
+  // (父容器)做拽后抬起鼠标时 => 新增图表
+  function handleParentDrop(event) {
     event.preventDefault()
-
-    const currentDropIndex = dropIndex.current
-    const newItems = [...itemList]
-    
-    if (currentDropIndex !== null) {
-      newItems[dropIndex.current] = dragData.current
-    } else {
-      newItems.push(dragData.current)
-    }
-
-    setItemList(newItems)
-
-    // 清空拖拽数据和目标索引
+    const res = dragData.current
+    console.log('res', res)
     dragData.current = null
-    dropIndex.current = null
+
+    const target = event.target
+    if (target.classList.contains(style.grid_item)) {
+      // 当前鼠标在子元素上
+      console.log('拖动到子元素上')
+      currentActionType.current = 'item'
+      console.log('target', target)
+    } else {
+      // 当前鼠标在父容器元素上
+      console.log('拖动到父容器元素上')
+      currentActionType.current = 'parent'
+      setItemList((prev) => {
+        return [...prev, res]
+      })
+    }
   }
 
   return (
@@ -59,18 +74,20 @@ const Dnd = () => {
         </div>
         <div
           className={style.center}
-          onDragOver={(event) => handleDragOver(event, null)}
-          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+          onDrop={(event) => handleParentDrop(event)}
+          // onDragEnter={(event) => handleParentDragEnter(event)}
+          // onDragLeave={(event) => handleParentDragLeave(event)}
         >
           <div className={style.grid}>
             {itemList.map((item, index) => (
               <div
+                // onDrop={(event, index) => handleItemDrop(event, index)}
                 key={index}
-                onDragOver={(event) => handleDragOver(event, index)}
-                onDrop={handleDrop}
-                className={`${style.grid_item} ${style.grid_item}${item?.id}`}
+                // onDragEnter={(event) => handleItemDragEnter(event)}
+                className={`${style.grid_item} ${style.grid_item}${item.id}`}
               >
-                {item?.name}
+                {item.name}
               </div>
             ))}
           </div>
