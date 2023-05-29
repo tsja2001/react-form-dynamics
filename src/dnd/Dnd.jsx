@@ -1,42 +1,44 @@
-import { memo } from 'react'
+import { memo, useRef, useState } from 'react'
 import { chartDataList } from './chartDataList'
 import style from './Dnd.module.scss'
-import Grid from './Grid/Grid'
 
 const Dnd = () => {
-  const dashboard = [
-    [{ id: '1-1' }, { id: '1-2' }, { id: '1-3' }],
-    [{ id: '2-1' }, { id: '2-2' }, { id: '2-3' }],
-    [{ id: '3-1' }, { id: '3-2' }, { id: '3-3' }],
-  ]
+  const dragData = useRef(null)
+  const dropIndex = useRef(null)
 
-  // 开始拖拽
-  function handleDragStart(event) {
-    event.dataTransfer.setData('text/plain', event.target.id)
+  const [itemList, setItemList] = useState([
+    {
+      id: 1,
+      name: 'Chart 1',
+    },
+  ])
+
+  function handleDragStart(event, data) {
+    dragData.current = data
   }
 
-  // 拖拽过程中
-  function handleDragOver(event) {
+  function handleDragOver(event, index) {
     event.preventDefault()
+    dropIndex.current = index
   }
 
-  // 做拽后抬起鼠标时
   function handleDrop(event) {
     event.preventDefault()
-    const data = event.dataTransfer.getData('text/plain')
-    console.log(data)
-  }
 
-  // 拖拽移动过元素时
-  function handleDragEnter(event) {
-    event.preventDefault()
-    console.log('拖拽进入元素时🫠', event.target)
-  }
+    const currentDropIndex = dropIndex.current
+    const newItems = [...itemList]
+    
+    if (currentDropIndex !== null) {
+      newItems[dropIndex.current] = dragData.current
+    } else {
+      newItems.push(dragData.current)
+    }
 
-  // 拖拽移出元素时
-  function handleDragLeave(event) {
-    event.preventDefault()
-    console.log('拖拽移出元素时😡', event.target)
+    setItemList(newItems)
+
+    // 清空拖拽数据和目标索引
+    dragData.current = null
+    dropIndex.current = null
   }
 
   return (
@@ -48,7 +50,7 @@ const Dnd = () => {
               id={item.id}
               key={index}
               className={style.item}
-              onDragStart={handleDragStart}
+              onDragStart={(event) => handleDragStart(event, item)}
               draggable={true}
             >
               <span>{item.name}</span>
@@ -57,25 +59,23 @@ const Dnd = () => {
         </div>
         <div
           className={style.center}
-          onDragOver={handleDragOver}
+          onDragOver={(event) => handleDragOver(event, null)}
           onDrop={handleDrop}
-          onDragEnter={handleDragEnter}
-          onDragLeave={handleDragLeave}
         >
           <div className={style.grid}>
-            <div className={style.grid_item}>1</div>
-            <div className={style.grid_item}>2</div>
-            <div className={style.grid_item}>3</div>
-            <div className={style.grid_item}>4</div>
-            <div className={style.grid_item}>5</div>
-            <div className={style.grid_item}>6</div>
-            <div className={style.grid_item}>7</div>
-            <div className={style.grid_item}>8</div>
-            <div className={style.grid_item}>9</div>
+            {itemList.map((item, index) => (
+              <div
+                key={index}
+                onDragOver={(event) => handleDragOver(event, index)}
+                onDrop={handleDrop}
+                className={`${style.grid_item} ${style.grid_item}${item?.id}`}
+              >
+                {item?.name}
+              </div>
+            ))}
           </div>
         </div>
       </div>
-      <Grid></Grid>
     </>
   )
 }

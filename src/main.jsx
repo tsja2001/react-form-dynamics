@@ -9,6 +9,7 @@ import { Charts } from './charts/Charts.jsx'
 import Dnd from './dnd/Dnd.jsx'
 
 import 'react-grid-layout/css/styles.css'
+import MyChart from './dnd/myChart/MyChart.jsx'
 // import Grid2 from './dnd/grid2/Grid2.jsx'
 // import 'react-resizable/css/styles.css'
 
@@ -34,8 +35,8 @@ const router = createBrowserRouter([
     element: <Dnd />,
   },
   {
-    path: '/grid2',
-    // element: <Grid2 />,
+    path: '/myChart',
+    element: <MyChart />,
   },
 ])
 
