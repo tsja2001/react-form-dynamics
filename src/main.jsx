@@ -6,6 +6,11 @@ import Home from './home.jsx'
 import TreeDemo from './tree/Tree.jsx'
 import CollapseDemo from './collapse/Collapse.jsx'
 import { Charts } from './charts/Charts.jsx'
+import Dnd from './dnd/Dnd.jsx'
+
+import 'react-grid-layout/css/styles.css'
+// import Grid2 from './dnd/grid2/Grid2.jsx'
+// import 'react-resizable/css/styles.css'
 
 const router = createBrowserRouter([
   {
@@ -23,6 +28,14 @@ const router = createBrowserRouter([
   {
     path: '/charts',
     element: <Charts />,
+  },
+  {
+    path: '/dnd',
+    element: <Dnd />,
+  },
+  {
+    path: '/grid2',
+    // element: <Grid2 />,
   },
 ])
 
