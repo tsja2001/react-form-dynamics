@@ -1,34 +1,34 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 
-import {
-  createBrowserRouter,
-  RouterProvider,
-} from "react-router-dom";
-import Home from './home.jsx';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import Home from './home.jsx'
 import TreeDemo from './tree/Tree.jsx'
 import CollapseDemo from './collapse/Collapse.jsx'
-
+import { Charts } from './charts/Charts.jsx'
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
     element: <Home />,
   },
   {
     path: '/tree',
-    element: <TreeDemo/>
+    element: <TreeDemo />,
   },
   {
     path: '/collapse',
-    element: <CollapseDemo/>
-  }
-]);
-
+    element: <CollapseDemo />,
+  },
+  {
+    path: '/charts',
+    element: <Charts />,
+  },
+])
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     {/* <App /> */}
     <RouterProvider router={router} />
-  </React.StrictMode>,
+  </React.StrictMode>
 )

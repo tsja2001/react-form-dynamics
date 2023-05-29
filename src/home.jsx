@@ -11,6 +11,7 @@ const Home = () => {
       <h1>home</h1>
 			<NavLink to='/tree'>TreeDemo页面</NavLink>
 			<NavLink to='/collapse'>Collapse页面</NavLink>
+			<NavLink to='/charts'>图表页面</NavLink>
       <Row className="" gutter={6}>
         <Col className="" span={10}>
           <Card className="" title="图表预览">

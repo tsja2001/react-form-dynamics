@@ -1,4 +1,4 @@
-import TreeNode from '../../tree/treeNode/TreeNode'
+import TreeNode from '@/component/treeNode/TreeNode'
 import { Input, Switch, Select } from 'antd'
 
 const areaTreeConfig = [
@@ -21,9 +21,9 @@ const areaTreeConfig = [
           </TreeNode>
         ),
         disabled: false,
-        key: '1-0',
-      },
-    ],
+        key: '1-0'
+      }
+    ]
   },
   {
     title: (
@@ -43,9 +43,9 @@ const areaTreeConfig = [
             <Input />
           </TreeNode>
         ),
-        key: '2-0',
-      },
-    ],
+        key: '2-0'
+      }
+    ]
   },
   {
     title: (
@@ -76,12 +76,12 @@ const areaTreeConfig = [
                 { value: 'top-right', label: '上右' },
                 { value: 'bottom-left', label: '下左' },
                 { value: 'bottom-center', label: '下中' },
-                { value: 'bottom-right', label: '下右' },
+                { value: 'bottom-right', label: '下右' }
               ]}
             />
           </TreeNode>
         ),
-        key: '3-0',
+        key: '3-0'
       },
       {
         title: (
@@ -93,7 +93,7 @@ const areaTreeConfig = [
             <Switch />
           </TreeNode>
         ),
-        key: '3-1',
+        key: '3-1'
       },
       {
         title: (
@@ -105,7 +105,7 @@ const areaTreeConfig = [
             <Switch />
           </TreeNode>
         ),
-        key: '3-2',
+        key: '3-2'
       },
       {
         title: (
@@ -117,10 +117,18 @@ const areaTreeConfig = [
             <Switch />
           </TreeNode>
         ),
-        key: '3-3',
-      },
-    ],
+        key: '3-3'
+      }
+    ]
   },
+  {
+    title: (
+      <TreeNode label="平滑" name={['smooth']} valuePropName="checked">
+        <Switch />
+      </TreeNode>
+    ),
+    key: '4'
+  }
 ]
 
 export default areaTreeConfig
