@@ -89,7 +89,7 @@ export const ColumnDemo = () => {
     isGroup: true,
     xField: '月份',
     yField: '月均降雨量',
-    seriesField: 'name'
+    seriesField: 'name',
 
     /** 设置颜色 */
     //color: ['#1ca9e6', '#f88c24'],

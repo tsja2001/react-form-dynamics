@@ -13,6 +13,46 @@ const DndByGPT = () => {
       name: 'Chart 1',
       chart: <LineDemo />,
     },
+    {
+      id: 2,
+      name: 'Chart 2',
+      chart: <LineDemo />,
+    },
+    {
+      id: 3,
+      name: 'Chart 3',
+      chart: <LineDemo />,
+    },
+    {
+      id: 4,
+      name: 'Chart 4',
+      chart: <LineDemo />,
+    },
+    {
+      id: 5,
+      name: 'Chart 5',
+      chart: <LineDemo />,
+    },
+    {
+      id: 6,
+      name: 'Chart 6',
+      chart: <LineDemo />,
+    },
+    {
+      id: 7,
+      name: 'Chart 7',
+      chart: <LineDemo />,
+    },
+    {
+      id: 8,
+      name: 'Chart 8',
+      chart: <LineDemo />,
+    },
+    {
+      id: 9,
+      name: 'Chart 9',
+      chart: <LineDemo />,
+    },
   ])
 
   function handleDragStart(event, data) {
@@ -75,7 +115,13 @@ const DndByGPT = () => {
                 onDrop={handleDrop}
                 className={`${style.grid_item} ${style.grid_item}${item.id}`}
               >
-                <div className={style.chartWarp}>{item.chart}</div>
+                <div className={style.chartWarp}>
+                  {item.chart ? (
+                    item.chart
+                  ) : (
+                    <div className={style.placehoder}>placehoder</div>
+                  )}
+                </div>
               </div>
             ))}
           </div>

@@ -1,28 +1,169 @@
 import { memo, useRef, useState } from 'react'
 import { chartDataList } from './chartDataList'
 import style from './Dnd.module.scss'
+import {
+  DownCircleFilled,
+  LeftCircleFilled,
+  RightCircleFilled,
+  UpCircleFilled,
+  UpCircleTwoTone,
+} from '@ant-design/icons'
 import LineDemo from '../charts/LineDemo'
+import { Button } from 'antd'
+import { getRowAndCol } from '../utils/getRowAndCol'
 
 const DndByGPT = () => {
   const dragData = useRef(null)
   const dropIndex = useRef(null)
+  const clickIndex = useRef(null)
+  const toBeRemovedIndex = useRef(null)
 
   const [itemList, setItemList] = useState([
     {
       id: 1,
-      name: 'Chart 1',
-      chart: <LineDemo />,
+      name: 'chart1',
+      style: {
+        gridColumnStart: 'span 1',
+        gridRowStart: 'span 1',
+      },
+      
+    },
+    {
+      id: 2,
+      name: 'chart2',
+      style: {
+        gridColumnStart: 'span 1',
+        gridRowStart: 'span 1',
+      },
+    },
+    {
+      id: 3,
+      name: 'chart3',
+      style: {
+        gridColumnStart: 'span 1',
+        gridRowStart: 'span 1',
+      },
+    },
+    {
+      id: 4,
+      name: 'chart4',
+      style: {
+        gridColumnStart: 'span 1',
+        gridRowStart: 'span 1',
+      },
+    },
+    {
+      id: 5,
+      name: 'chart5',
+      style: {
+        gridColumnStart: 'span 1',
+        gridRowStart: 'span 1',
+      },
+    },
+    {
+      id: 6,
+      name: 'chart6',
+      style: {
+        gridColumnStart: 'span 1',
+        gridRowStart: 'span 1',
+      },
+    },
+    {
+      id: 7,
+      name: 'chart7',
+      style: {
+        gridColumnStart: 'span 1',
+        gridRowStart: 'span 1',
+      },
+    },
+    {
+      id: 8,
+      name: 'chart8',
+      style: {
+        gridColumnStart: 'span 1',
+        gridRowStart: 'span 1',
+      },
+    },
+    {
+      id: 9,
+      name: 'chart9',
+      style: {
+        gridColumnStart: 'span 1',
+        gridRowStart: 'span 1',
+      },
     },
   ])
 
-  function handleDragStart(event, data) {
+  // 点击选中每一个元素
+  function handleClickItem(event, index) {
+    console.log(index)
+    clickIndex.current = index
+  }
+  // 行数编辑
+  function rowEditHandler(count) {
+    const newItems = [...itemList]
+    const previousStyle = newItems[clickIndex.current]?.style ?? {}
+  if (previousStyle.gridRowStart === undefined) {
+      previousStyle.gridRowStart = 'span 1'
+    }
+    const previousRowCount = parseInt(
+      previousStyle.gridRowStart.match(/\d+/)[0]
+    )
+    if (previousRowCount + count <= 0) {
+      console.log('行数不能小于1')
+      return
+    }
+
+    const newRowCount = previousRowCount + count
+
+    newItems[clickIndex.current].style = {
+      ...previousStyle,
+      gridRowStart: `span ${newRowCount}`,
+    }
+    console.log('gridRowStart', newItems[clickIndex.current].style.gridRowStart)
+    getRowAndCol(newItems)
+    setItemList(newItems)
+  }
+  // 列数编辑
+  function columnEditHandler(count) {
+    const newItems = [...itemList]
+    const previousStyle = newItems[clickIndex.current]?.style ?? {}
+    if (previousStyle.gridColumnStart === undefined) {
+      previousStyle.gridColumnStart = 'span 1'
+    }
+    const previousColumnCount = parseInt(
+      previousStyle.gridColumnStart.match(/\d+/)[0]
+    )
+    if (previousColumnCount + count <= 0) {
+      console.log('列数不能小于1')
+      return
+    }
+    const newColumnCount = previousColumnCount + count
+
+    newItems[clickIndex.current].style = {
+      ...previousStyle,
+      gridColumnStart: `span ${newColumnCount}`,
+    }
+    console.log(
+      'gridColumnStart',
+      newItems[clickIndex.current].style.gridColumnStart
+    )
+    setItemList(newItems)
+  }
+
+  /**
+   * 
+   * @param {*} event 默认事件
+   * @param {*} data 拖拽数据
+   * @param {*} ifRemove 是否移除拖动的元素
+   */
+  function handleDragStart(event, data, ifRemove = false) {
     dragData.current = data
   }
 
   function handleDragOver(event, index) {
     event.preventDefault()
     event.stopPropagation()
-    console.log('index', index)
     dropIndex.current = index
   }
 
@@ -34,9 +175,7 @@ const DndByGPT = () => {
     const newItems = [...itemList]
 
     if (currentDropIndex !== null) {
-      newItems[dropIndex.current] = dragData.current
-    } else {
-      newItems.push(dragData.current)
+      newItems[dropIndex.current].chart = dragData.current.chart
     }
 
     setItemList(newItems)
@@ -73,15 +212,48 @@ const DndByGPT = () => {
                 key={index}
                 onDragOver={(event) => handleDragOver(event, index)}
                 onDrop={handleDrop}
-                className={`${style.grid_item} ${style.grid_item}${item.id}`}
+                style={item.style}
+                className={`${style.grid_item}`}
+                onClick={(event) => {
+                  handleClickItem(event, index)
+                }}
               >
-                <div className={style.chartWarp}>{item.chart}</div>
+                <div className={style.chartWarp}>
+                  {item.chart ? item.chart : `${item.name} 请将图表拖拽到此处`}
+                </div>
               </div>
             ))}
           </div>
         </div>
-        <div className={style.right}>
-          <button>编辑</button>
+      </div>
+
+      <div className={style.edit}>
+        <Button>编辑</Button>
+        <Button onClick={() => rowEditHandler(1)}>行数(纵向)+1</Button>
+        <Button onClick={() => columnEditHandler(1)}>列数(横向)+1</Button>
+        <Button onClick={() => rowEditHandler(-1)}>行数(纵向)-1</Button>
+        <Button onClick={() => columnEditHandler(-1)}>列数(横向)-1</Button>
+
+        <div className={style.eidtBox}>
+          <div className={`${style.iconBox} ${style.topIconBox}`}>
+            <UpCircleFilled className={`${style.antdicon} `} />
+            <DownCircleFilled className={`${style.antdicon} `} />
+          </div>
+
+          <div className={`${style.iconBox} ${style.bottomIconBox}`}>
+            <UpCircleFilled className={`${style.antdicon}`} />
+            <DownCircleFilled className={`${style.antdicon}`} />
+          </div>
+
+          <div className={`${style.iconBox} ${style.rightIconBox}`}>
+            <LeftCircleFilled className={`${style.antdicon}`} />
+            <RightCircleFilled className={`${style.antdicon}`} />
+          </div>
+
+          <div className={`${style.iconBox} ${style.leftIconBox}`}>
+            <LeftCircleFilled className={`${style.antdicon}`} />
+            <RightCircleFilled className={`${style.antdicon}`} />
+          </div>
         </div>
       </div>
     </>

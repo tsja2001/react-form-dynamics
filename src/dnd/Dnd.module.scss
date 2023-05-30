@@ -12,27 +12,102 @@
     }
   }
   .center {
-    width: 1200px;
-    height: 600px;
+    // width: 1200px;
+    // height: 600px;
+    // width: 900px;
+    // height: 1200px;
     border: #ccc 1px solid;
     margin-left: 20px;
     .grid {
       width: 100%;
       height: 100%;
       display: grid;
-      grid-template-columns: 400px 400px 400px;
-      grid-template-rows: 200px 200px 200px;
+      // grid-template-columns: 400px 400px 400px;
+      // grid-template-rows: 200px 200px 200px;
+      grid-template-columns: 200px 200px 200px;
+      grid-template-rows: 220px 220px 220px;
+      background-color: #DBE2EC;
       .grid_item {
+        background-color: #fff;
         width: 100%;
         height: 100%;
-        .chartWarp{
+        border: 1px solid #f0f0f0;
+        position: relative;
+
+        .chartWarp {
+          position: relative;
+          // z-index: 0;
           width: 100%;
           height: 100%;
         }
       }
-      .grid_item1{
-        grid-area: 1 / 1 / 2 / 2;
+    }
+  }
+}
+.edit {
+  .eidtBox {
+    width: 300px;
+    height: 200px;
+    position: relative;
+    border: 1px solid #ccc;
+    .iconBox {
+      position: absolute;
+      .antdicon {
+        position: relative;
+        color: #155bfe8d;
+        &:hover {
+          color: #155bfed0;
+        }
       }
+    }
+
+    .topIconBox {
+      // display: none;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+    }
+    .bottomIconBox {
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+    }
+    .leftIconBox {
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+    }
+    .rightIconBox {
+      top: 50%;
+      right: 0;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .iconup {
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .icondown {
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .iconleft {
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+    }
+    .iconright {
+      top: 50%;
+      right: 0;
+      transform: translateY(-50%);
     }
   }
 }

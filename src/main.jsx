@@ -40,7 +40,7 @@ const router = createBrowserRouter([
       <>
         {/* <Dnd /> */}
         <DndByGPT />
-        <DndByGptResize />
+        {/* <DndByGptResize /> */}
       </>
     ),
   },
