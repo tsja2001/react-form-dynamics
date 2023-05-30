@@ -6,11 +6,14 @@ import Home from './home.jsx'
 import TreeDemo from './tree/Tree.jsx'
 import CollapseDemo from './collapse/Collapse.jsx'
 import { Charts } from './charts/Charts.jsx'
-import Dnd from './dnd/Dnd.jsx'
 
 import 'react-grid-layout/css/styles.css'
 import MyChart from './dnd/myChart/MyChart.jsx'
 import DndByGPT from './dnd/DndByGPT.jsx'
+import DndByGptResize from './dnd/DndByGptResize.jsx'
+import GridLayout from './dnd/react-grid-layout/GridLayout.jsx'
+import '../dist/output.css'
+
 // import Grid2 from './dnd/grid2/Grid2.jsx'
 // import 'react-resizable/css/styles.css'
 
@@ -37,6 +40,15 @@ const router = createBrowserRouter([
       <>
         {/* <Dnd /> */}
         <DndByGPT />
+        <DndByGptResize />
+      </>
+    ),
+  },
+  {
+    path: '/grid',
+    element: (
+      <>
+        <GridLayout />
       </>
     ),
   },
