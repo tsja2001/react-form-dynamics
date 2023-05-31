@@ -1,95 +1,95 @@
-import { memo, useRef, useState } from 'react'
-import { chartDataList } from './chartDataList'
-import style from './Dnd.module.scss'
+import { memo, useRef, useState } from "react"
+import { chartDataList } from "./chartDataList"
+import style from "./Dnd.module.scss"
 import {
   DownCircleFilled,
   LeftCircleFilled,
   RightCircleFilled,
   UpCircleFilled,
   UpCircleTwoTone,
-} from '@ant-design/icons'
-import LineDemo from '../charts/LineDemo'
-import { Button } from 'antd'
-import { getRowAndCol } from '../utils/getRowAndCol'
+} from "@ant-design/icons"
+import LineDemo from "../charts/LineDemo"
+import { Button } from "antd"
+import { getRowAndCol } from "../utils/getRowAndCol"
 
 const DndByGPT = () => {
   const dragData = useRef(null)
   const dropIndex = useRef(null)
   const clickIndex = useRef(null)
   const toBeRemovedIndex = useRef(null)
+  const previousDropIndex = useRef(null)
 
   const [itemList, setItemList] = useState([
     {
       id: 1,
-      name: 'chart1',
+      name: "chart1",
       style: {
-        gridColumnStart: 'span 1',
-        gridRowStart: 'span 1',
+        gridColumnStart: "span 1",
+        gridRowStart: "span 1",
       },
-      
     },
     {
       id: 2,
-      name: 'chart2',
+      name: "chart2",
       style: {
-        gridColumnStart: 'span 1',
-        gridRowStart: 'span 1',
+        gridColumnStart: "span 1",
+        gridRowStart: "span 1",
       },
     },
     {
       id: 3,
-      name: 'chart3',
+      name: "chart3",
       style: {
-        gridColumnStart: 'span 1',
-        gridRowStart: 'span 1',
+        gridColumnStart: "span 1",
+        gridRowStart: "span 1",
       },
     },
     {
       id: 4,
-      name: 'chart4',
+      name: "chart4",
       style: {
-        gridColumnStart: 'span 1',
-        gridRowStart: 'span 1',
+        gridColumnStart: "span 1",
+        gridRowStart: "span 1",
       },
     },
     {
       id: 5,
-      name: 'chart5',
+      name: "chart5",
       style: {
-        gridColumnStart: 'span 1',
-        gridRowStart: 'span 1',
+        gridColumnStart: "span 1",
+        gridRowStart: "span 1",
       },
     },
     {
       id: 6,
-      name: 'chart6',
+      name: "chart6",
       style: {
-        gridColumnStart: 'span 1',
-        gridRowStart: 'span 1',
+        gridColumnStart: "span 1",
+        gridRowStart: "span 1",
       },
     },
     {
       id: 7,
-      name: 'chart7',
+      name: "chart7",
       style: {
-        gridColumnStart: 'span 1',
-        gridRowStart: 'span 1',
+        gridColumnStart: "span 1",
+        gridRowStart: "span 1",
       },
     },
     {
       id: 8,
-      name: 'chart8',
+      name: "chart8",
       style: {
-        gridColumnStart: 'span 1',
-        gridRowStart: 'span 1',
+        gridColumnStart: "span 1",
+        gridRowStart: "span 1",
       },
     },
     {
       id: 9,
-      name: 'chart9',
+      name: "chart9",
       style: {
-        gridColumnStart: 'span 1',
-        gridRowStart: 'span 1',
+        gridColumnStart: "span 1",
+        gridRowStart: "span 1",
       },
     },
   ])
@@ -103,14 +103,14 @@ const DndByGPT = () => {
   function rowEditHandler(count) {
     const newItems = [...itemList]
     const previousStyle = newItems[clickIndex.current]?.style ?? {}
-  if (previousStyle.gridRowStart === undefined) {
-      previousStyle.gridRowStart = 'span 1'
+    if (previousStyle.gridRowStart === undefined) {
+      previousStyle.gridRowStart = "span 1"
     }
     const previousRowCount = parseInt(
       previousStyle.gridRowStart.match(/\d+/)[0]
     )
     if (previousRowCount + count <= 0) {
-      console.log('行数不能小于1')
+      console.log("行数不能小于1")
       return
     }
 
@@ -120,7 +120,7 @@ const DndByGPT = () => {
       ...previousStyle,
       gridRowStart: `span ${newRowCount}`,
     }
-    console.log('gridRowStart', newItems[clickIndex.current].style.gridRowStart)
+    console.log("gridRowStart", newItems[clickIndex.current].style.gridRowStart)
     getRowAndCol(newItems)
     setItemList(newItems)
   }
@@ -129,13 +129,13 @@ const DndByGPT = () => {
     const newItems = [...itemList]
     const previousStyle = newItems[clickIndex.current]?.style ?? {}
     if (previousStyle.gridColumnStart === undefined) {
-      previousStyle.gridColumnStart = 'span 1'
+      previousStyle.gridColumnStart = "span 1"
     }
     const previousColumnCount = parseInt(
       previousStyle.gridColumnStart.match(/\d+/)[0]
     )
     if (previousColumnCount + count <= 0) {
-      console.log('列数不能小于1')
+      console.log("列数不能小于1")
       return
     }
     const newColumnCount = previousColumnCount + count
@@ -145,14 +145,14 @@ const DndByGPT = () => {
       gridColumnStart: `span ${newColumnCount}`,
     }
     console.log(
-      'gridColumnStart',
+      "gridColumnStart",
       newItems[clickIndex.current].style.gridColumnStart
     )
     setItemList(newItems)
   }
 
   /**
-   * 
+   *
    * @param {*} event 默认事件
    * @param {*} data 拖拽数据
    * @param {*} ifRemove 是否移除拖动的元素
@@ -176,6 +176,36 @@ const DndByGPT = () => {
 
     if (currentDropIndex !== null) {
       newItems[dropIndex.current].chart = dragData.current.chart
+    }
+
+    setItemList(newItems)
+
+    // 清空拖拽数据和目标索引
+    dragData.current = null
+    dropIndex.current = null
+  }
+
+  function handleItemStartDrop(event, data, index) {
+    dragData.current = data
+    previousDropIndex.current = index
+  }
+
+  function handleItemDrop(event) {
+    event.preventDefault()
+    event.stopPropagation()
+
+    const currentDropIndex = dropIndex.current
+    const newItems = [...itemList]
+
+    if (currentDropIndex !== null) {
+      newItems[dropIndex.current].chart = dragData.current.chart
+    }
+
+    if (
+      previousDropIndex.current !== null &&
+      dropIndex.current !== previousDropIndex.current
+    ) {
+      newItems[previousDropIndex.current].chart = null
     }
 
     setItemList(newItems)
@@ -218,8 +248,31 @@ const DndByGPT = () => {
                   handleClickItem(event, index)
                 }}
               >
-                <div className={style.chartWarp}>
-                  {item.chart ? item.chart : `${item.name} 请将图表拖拽到此处`}
+                <div
+                  className={style.chartWarp}
+                  onDragStart={(event) =>
+                    handleItemStartDrop(event, item, index)
+                  }
+                  draggable={true}
+                  onDragOver={(event) => handleDragOver(event, index)}
+                  onDrop={handleItemDrop}
+                  onClick={(event) => {
+                    handleClickItem(event, index)
+                  }}
+                >
+                  {item.chart ? (
+                    <>
+                      {item.chart}
+                      <div className={style.arrowTop}></div>
+                      <div className={style.arrowRight}></div>
+                      <div className={style.arrowBottom}></div>
+                      <div className={style.arrowLeft}></div>
+                    </>
+                  ) : (
+                    ""
+                  )}
+
+                  {/* {item.chart ? item.chart : `${item.name} 请将图表拖拽到此处`} */}
                 </div>
               </div>
             ))}

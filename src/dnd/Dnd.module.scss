@@ -26,7 +26,7 @@
       // grid-template-rows: 200px 200px 200px;
       grid-template-columns: 200px 200px 200px;
       grid-template-rows: 220px 220px 220px;
-      background-color: #DBE2EC;
+      background-color: #dbe2ec;
       .grid_item {
         background-color: #fff;
         width: 100%;
@@ -36,9 +36,57 @@
 
         .chartWarp {
           position: relative;
-          // z-index: 0;
+          z-index: 5;
           width: 100%;
           height: 100%;
+
+          // &::after {
+          //   content: "";
+          //   height: 100%;
+          //   width: 1px;
+          //   cursor: col-resize;
+          //   position: absolute;
+          //   right: 0;
+          //   top: 0;
+          //   z-index: 8;
+          // }
+
+          .arrowTop {
+            width: 100%;
+            height: 4px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 8;
+            cursor: row-resize;
+          }
+          .arrowRight {
+            width: 4px;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            right: 0;
+            z-index: 8;
+            cursor: col-resize;
+          }
+          .arrowBottom {
+            width: 100%;
+            height: 4px;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            z-index: 8;
+            cursor: row-resize;
+          }
+          .arrowLeft {
+            width: 4px;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 8;
+            cursor: col-resize;
+          }
         }
       }
     }
