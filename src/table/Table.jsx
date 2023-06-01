@@ -1,8 +1,7 @@
 import { memo } from 'react'
-import { PivotSheet } from '@antv/s2'
-import { SheetComponent } from '@antv/s2-react';
+import { SheetComponent } from '@antv/s2-react'
 import { s2Data } from '../data/table/table_demo'
-import '@antv/s2-react/dist/style.min.css';
+import '@antv/s2-react/dist/style.min.css'
 
 const Table = () => {
   const s2Options = {
@@ -11,10 +10,18 @@ const Table = () => {
   }
 
   const s2DataConfig = {
+    describe: '标准交叉表数据。',
     fields: {
-      columns: ['province', 'city', 'type', 'price', 'cost'],
+      rows: ['province', 'city'],
+      columns: ['type', 'sub_type'],
+      values: ['number'],
+      valueInCols: true,
     },
     meta: [
+      {
+        field: 'number',
+        name: '数量',
+      },
       {
         field: 'province',
         name: '省份',
@@ -25,19 +32,16 @@ const Table = () => {
       },
       {
         field: 'type',
-        name: '商品类别',
+        name: '类别',
       },
       {
-        field: 'price',
-        name: '价格',
-      },
-      {
-        field: 'cost',
-        name: '成本',
+        field: 'sub_type',
+        name: '子类别',
       },
     ],
-    data: s2Data,
-  };
+    data: s2Data.data,
+    totalData: s2Data.totalData,
+  }
 
   return (
     <div>
@@ -45,7 +49,7 @@ const Table = () => {
       <SheetComponent
         dataCfg={s2DataConfig}
         options={s2Options}
-        sheetType="table"
+        // sheetType="table"
       />
       ,
     </div>

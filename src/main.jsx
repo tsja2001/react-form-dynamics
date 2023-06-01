@@ -13,6 +13,8 @@ import DndByGPT from './dnd/DndByGPT.jsx'
 import DndByGptResize from './dnd/DndByGptResize.jsx'
 import GridLayout from './dnd/react-grid-layout/GridLayout.jsx'
 import Table from './table/Table.jsx'
+import TableWithSingleData from './table/TableWithSingleData.jsx'
+import TableWithSeriesData from './table/TableWithSeriesData.jsx'
 // import '../dist/output.css'
 
 // import Grid2 from './dnd/grid2/Grid2.jsx'
@@ -63,7 +65,13 @@ const router = createBrowserRouter([
   },
   {
     path: '/table',
-    element: <Table />,
+    element: (
+      <>
+        {/* <Table /> */}
+        <TableWithSeriesData />
+        <TableWithSingleData /> <Table />
+      </>
+    ),
   },
 ])
 
