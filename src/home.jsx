@@ -30,6 +30,9 @@ const Home = () => {
       <h3>
         <NavLink to="/grid">网格布局+拖拽缩放</NavLink>
       </h3>
+      <h3>
+        <NavLink to="/table">antv s2 表格</NavLink>
+      </h3>
       <Row className="" gutter={6}>
         <Col className="" span={10}>
           <Card className="" title="图表预览">
