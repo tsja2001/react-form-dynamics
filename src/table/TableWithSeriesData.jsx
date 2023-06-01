@@ -8,25 +8,6 @@ import seriesLineData from '../data/getChartMockData/seriesLineData'
 const TableWithSeriesData = () => {
   const rawData = seriesColumnData
 
-  const s2Options = {
-    width: 600,
-    height: 600,
-    // 对于列数据只有一列的情况，需要设置为 grid
-    hierarchyType: 'grid'
-  }
-
-  const s2DataConfig = {
-    fields: {
-      rows: ['key','type'],
-      // columns: [null],
-      values: ['value'],
-      // valuesInCols: true,
-    },
-    hierarchyType: 'tree',
-    meta: rawData.chartConfig.metaConf,
-    data: rawData.chartConfig.data,
-  }
-
   return (
     <div>
       <h2>TableWithSeriesData</h2>
@@ -35,8 +16,13 @@ const TableWithSeriesData = () => {
       </div>
       <div style={{ paddingTop: '200px' }}>
         <SheetComponent
-          dataCfg={s2DataConfig}
-          options={s2Options}
+          dataCfg={{
+            data: rawData.chartConfig.data,
+            ...rawData.tableConfig.dataCfg,
+          }}
+          options={{
+            ...rawData.tableConfig.options,
+          }}
           // sheetType="table"
         />
       </div>
