@@ -7,17 +7,16 @@ import {
   RightCircleFilled,
   UpCircleFilled,
 } from "@ant-design/icons"
-import LineDemo from "../charts/LineDemo"
 import { Button } from "antd"
-import { getRowAndCol } from "../utils/getRowAndCol"
 
 const DndByGPT = () => {
+  // 拖拽数据
   const dragData = useRef(null)
+  // 当前鼠标拖动的元素, 要放置的目标索引
   const dropIndex = useRef(null)
   const clickIndex = useRef(null)
-  const toBeRemovedIndex = useRef(null)
+  // 
   const previousDropIndex = useRef(null)
-  const arrow = useRef(null)
 
   const [itemList, setItemList] = useState([
     {
@@ -112,59 +111,12 @@ const DndByGPT = () => {
     clickIndex.current = index
   }
   // 行数编辑
-  function rowEditHandler(count) {
-    const newItems = [...itemList]
-    const previousStyle = newItems[clickIndex.current]?.style ?? {}
-    if (previousStyle.gridRowStart === undefined) {
-      previousStyle.gridRowStart = "span 1"
-    }
-    const previousRowCount = parseInt(
-      previousStyle.gridRowStart.match(/\d+/)[0]
-    )
-    if (previousRowCount + count <= 0) {
-      console.log("行数不能小于1")
-      return
-    }
-
-    const newRowCount = previousRowCount + count
-
-    newItems[clickIndex.current].style = {
-      ...previousStyle,
-      gridRowStart: `span ${newRowCount}`,
-    }
-    console.log("gridRowStart", newItems[clickIndex.current].style.gridRowStart)
-    getRowAndCol(newItems)
-    setItemList(newItems)
-  }
+  function rowEditHandler(count) {}
   // 列数编辑
-  function columnEditHandler(count) {
-    const newItems = [...itemList]
-    const previousStyle = newItems[clickIndex.current]?.style ?? {}
-    if (previousStyle.gridColumnStart === undefined) {
-      previousStyle.gridColumnStart = "span 1"
-    }
-    const previousColumnCount = parseInt(
-      previousStyle.gridColumnStart.match(/\d+/)[0]
-    )
-    if (previousColumnCount + count <= 0) {
-      console.log("列数不能小于1")
-      return
-    }
-    const newColumnCount = previousColumnCount + count
-
-    newItems[clickIndex.current].style = {
-      ...previousStyle,
-      gridColumnStart: `span ${newColumnCount}`,
-    }
-    console.log(
-      "gridColumnStart",
-      newItems[clickIndex.current].style.gridColumnStart
-    )
-    setItemList(newItems)
-  }
+  function columnEditHandler(count) {}
 
   /**
-   *
+   * 开始从侧栏拖动图表
    * @param {*} event 默认事件
    * @param {*} data 拖拽数据
    * @param {*} ifRemove 是否移除拖动的元素
@@ -177,39 +129,20 @@ const DndByGPT = () => {
     event.preventDefault()
     event.stopPropagation()
     dropIndex.current = index
-
-    switch (arrow.current) {
-      case "top":
-        console.log("top", event)
-
-        break
-      case "right":
-        console.log("right", event)
-        break
-      case "bottom":
-        console.log("bottom", event)
-        break
-      case "left":
-        console.log("left", event)
-        if (item) {
-          item.chartStyle.width =
-            parseInt(item.chartStyle.width.slice(0, -2)) + 1 + "px"
-        }
-        console.log(item.chartStyle)
-        setItemList([...itemList])
-        break
-    }
   }
 
   function handleDrop(event) {
     event.preventDefault()
     event.stopPropagation()
 
-    const currentDropIndex = dropIndex.current
+    // const currentDropIndex = dropIndex.current
     const newItems = [...itemList]
 
-    if (currentDropIndex !== null) {
-      newItems[dropIndex.current].chart = dragData.current.chart
+    newItems[dropIndex.current].chart = dragData.current.chart
+    // 如果从item中拖动元素到item中, 则删除原来的元素
+    if(previousDropIndex.current !== null) {
+      newItems[previousDropIndex.current].chart = null
+      console.log(' previousDropIndex.current)', previousDropIndex.current)
     }
 
     setItemList(newItems)
@@ -217,51 +150,14 @@ const DndByGPT = () => {
     // 清空拖拽数据和目标索引
     dragData.current = null
     dropIndex.current = null
+    previousDropIndex.current = null
   }
 
+  // 开始拖动item元素
   function handleItemStartDrop(event, data, index) {
     dragData.current = data
     previousDropIndex.current = index
-  }
-
-  function handleItemDrop(event) {
-    event.preventDefault()
-    event.stopPropagation()
-
-    const currentDropIndex = dropIndex.current
-    const newItems = [...itemList]
-
-    if (currentDropIndex !== null) {
-      newItems[dropIndex.current].chart = dragData.current.chart
-    }
-
-    if (
-      previousDropIndex.current !== null &&
-      dropIndex.current !== previousDropIndex.current
-    ) {
-      newItems[previousDropIndex.current].chart = null
-    }
-
-    setItemList(newItems)
-
-    // 清空拖拽数据和目标索引
-    dragData.current = null
-    dropIndex.current = null
-  }
-
-  // 方向拖拽回调处理
-  function handleArrowDropStart(event, data, index, direction) {
-    dragData.current = data
-    previousDropIndex.current = index
-    arrow.current = direction
-    console.log(`Start Drop:`, event)
-  }
-
-  function handleArrowLeftDropOver(event, index) {
-    event.preventDefault()
-    event.stopPropagation()
-    dropIndex.current = index
-    console.log(`Drop Over:`, event)
+    console.log(index)
   }
 
   return (
@@ -280,17 +176,14 @@ const DndByGPT = () => {
             </div>
           ))}
         </div>
+
         <div
           className={style.center}
-          onDragOver={(event) => handleDragOver(event, null)}
-          onDrop={handleDrop}
         >
           <div className={style.grid}>
             {itemList.map((item, index) => (
               <div
                 key={index}
-                onDragOver={(event) => handleDragOver(event, index, item)}
-                onDrop={handleDrop}
                 style={item.style}
                 className={`${style.grid_item}`}
                 onClick={(event) => {
@@ -298,13 +191,16 @@ const DndByGPT = () => {
                 }}
               >
                 <div
+                  // 松开鼠标 放下元素
                   className={style.chartWarp}
+                  onDrop={handleDrop}
+                  // 开始拖动item元素
                   onDragStart={(event) =>
                     handleItemStartDrop(event, item, index)
                   }
-                  draggable={true}
+                  // 路过元素
                   onDragOver={(event) => handleDragOver(event, index, item)}
-                  onDrop={handleItemDrop}
+                  draggable={true}
                   onClick={(event) => {
                     handleClickItem(event, index)
                   }}
@@ -314,23 +210,11 @@ const DndByGPT = () => {
                       {item.chart({
                         style: item.chartStyle,
                       })}
-                      <div className={style.arrowTop}></div>
-                      <div className={style.arrowRight}></div>
-                      <div className={style.arrowBottom}></div>
-                      <div
-                        onDragStart={(event) =>
-                          handleArrowDropStart(event, item, index, "left")
-                        }
-                        draggable={true}
-                        // onDrop={handleItemDrop}
-                        className={style.arrowLeft}
-                      ></div>
                     </>
                   ) : (
                     `${item.name} 请将图表拖拽到此处`
                   )}
 
-                  {/* {item.chart ? item.chart : `${item.name} 请将图表拖拽到此处`} */}
                 </div>
               </div>
             ))}
