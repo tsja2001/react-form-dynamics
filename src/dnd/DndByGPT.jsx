@@ -6,7 +6,6 @@ import {
   LeftCircleFilled,
   RightCircleFilled,
   UpCircleFilled,
-  UpCircleTwoTone,
 } from "@ant-design/icons"
 import LineDemo from "../charts/LineDemo"
 import { Button } from "antd"
