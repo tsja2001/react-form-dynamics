@@ -1,16 +1,16 @@
-import { memo, useRef, useState } from 'react'
-import { chartDataList } from './chartDataList'
-import style from './Dnd.module.scss'
+import { memo, useRef, useState } from "react"
+import { chartDataList } from "./chartDataList"
+import style from "./Dnd.module.scss"
 import {
   DownCircleFilled,
   LeftCircleFilled,
   RightCircleFilled,
   UpCircleFilled,
   UpCircleTwoTone,
-} from '@ant-design/icons'
-import LineDemo from '../charts/LineDemo'
-import { Button } from 'antd'
-import { getRowAndCol } from '../utils/getRowAndCol'
+} from "@ant-design/icons"
+import LineDemo from "../charts/LineDemo"
+import { Button } from "antd"
+import { getRowAndCol } from "../utils/getRowAndCol"
 
 const DndByGPT = () => {
   const dragData = useRef(null)
@@ -18,79 +18,92 @@ const DndByGPT = () => {
   const clickIndex = useRef(null)
   const toBeRemovedIndex = useRef(null)
   const previousDropIndex = useRef(null)
+  const arrow = useRef(null)
 
   const [itemList, setItemList] = useState([
     {
       id: 1,
-      name: 'chart1',
+      name: "chart1",
       style: {
-        gridColumnStart: 'span 1',
-        gridRowStart: 'span 1',
+        gridColumnStart: "span 1",
+        gridRowStart: "span 1",
       },
+      chartStyle: { width: "200px", height: "220px" },
     },
     {
       id: 2,
-      name: 'chart2',
+      name: "chart2",
       style: {
-        gridColumnStart: 'span 1',
-        gridRowStart: 'span 1',
+        gridColumnStart: "span 1",
+        gridRowStart: "span 1",
       },
+      chartStyle: { width: "200px", height: "220px" },
     },
     {
       id: 3,
-      name: 'chart3',
+      name: "chart3",
       style: {
-        gridColumnStart: 'span 1',
-        gridRowStart: 'span 1',
+        gridColumnStart: "span 1",
+        gridRowStart: "span 1",
       },
+      chartStyle: { width: "200px", height: "220px" },
     },
     {
       id: 4,
-      name: 'chart4',
+      name: "chart4",
       style: {
-        gridColumnStart: 'span 1',
-        gridRowStart: 'span 1',
+        gridColumnStart: "span 1",
+        gridRowStart: "span 1",
       },
+      chartStyle: { width: "200px", height: "220px" },
     },
     {
       id: 5,
-      name: 'chart5',
+      name: "chart5",
       style: {
-        gridColumnStart: 'span 1',
-        gridRowStart: 'span 1',
+        gridColumnStart: "span 1",
+        gridRowStart: "span 1",
       },
+      chartStyle: { width: "200px", height: "220px" },
     },
     {
       id: 6,
-      name: 'chart6',
+      name: "chart6",
       style: {
-        gridColumnStart: 'span 1',
-        gridRowStart: 'span 1',
+        gridColumnStart: "span 1",
+        gridRowStart: "span 1",
       },
+      chartStyle: { width: "200px", height: "220px" },
     },
     {
       id: 7,
-      name: 'chart7',
+      name: "chart7",
       style: {
-        gridColumnStart: 'span 1',
-        gridRowStart: 'span 1',
+        gridColumnStart: "span 1",
+        gridRowStart: "span 1",
+      },
+      chartStyle: {
+        width: "200px",
+        height: "220px",
       },
     },
     {
       id: 8,
-      name: 'chart8',
+      name: "chart8",
       style: {
-        gridColumnStart: 'span 1',
-        gridRowStart: 'span 1',
+        gridColumnStart: "span 1",
+        gridRowStart: "span 1",
       },
+      chartStyle: { width: "200px", height: "220px" },
     },
     {
       id: 9,
-      name: 'chart9',
+      name: "chart9",
       style: {
-        gridColumnStart: 'span 1',
-        gridRowStart: 'span 1',
+        gridColumnStart: "span 1",
+        gridRowStart: "span 1",
       },
+      chartStyle: { width: "200px", height: "220px" },
     },
   ])
 
@@ -104,13 +117,13 @@ const DndByGPT = () => {
     const newItems = [...itemList]
     const previousStyle = newItems[clickIndex.current]?.style ?? {}
     if (previousStyle.gridRowStart === undefined) {
-      previousStyle.gridRowStart = 'span 1'
+      previousStyle.gridRowStart = "span 1"
     }
     const previousRowCount = parseInt(
       previousStyle.gridRowStart.match(/\d+/)[0]
     )
     if (previousRowCount + count <= 0) {
-      console.log('行数不能小于1')
+      console.log("行数不能小于1")
       return
     }
 
@@ -120,7 +133,7 @@ const DndByGPT = () => {
       ...previousStyle,
       gridRowStart: `span ${newRowCount}`,
     }
-    console.log('gridRowStart', newItems[clickIndex.current].style.gridRowStart)
+    console.log("gridRowStart", newItems[clickIndex.current].style.gridRowStart)
     getRowAndCol(newItems)
     setItemList(newItems)
   }
@@ -129,13 +142,13 @@ const DndByGPT = () => {
     const newItems = [...itemList]
     const previousStyle = newItems[clickIndex.current]?.style ?? {}
     if (previousStyle.gridColumnStart === undefined) {
-      previousStyle.gridColumnStart = 'span 1'
+      previousStyle.gridColumnStart = "span 1"
     }
     const previousColumnCount = parseInt(
       previousStyle.gridColumnStart.match(/\d+/)[0]
     )
     if (previousColumnCount + count <= 0) {
-      console.log('列数不能小于1')
+      console.log("列数不能小于1")
       return
     }
     const newColumnCount = previousColumnCount + count
@@ -145,7 +158,7 @@ const DndByGPT = () => {
       gridColumnStart: `span ${newColumnCount}`,
     }
     console.log(
-      'gridColumnStart',
+      "gridColumnStart",
       newItems[clickIndex.current].style.gridColumnStart
     )
     setItemList(newItems)
@@ -161,10 +174,32 @@ const DndByGPT = () => {
     dragData.current = data
   }
 
-  function handleDragOver(event, index) {
+  function handleDragOver(event, index, item) {
     event.preventDefault()
     event.stopPropagation()
     dropIndex.current = index
+
+    switch (arrow.current) {
+      case "top":
+        console.log("top", event)
+
+        break
+      case "right":
+        console.log("right", event)
+        break
+      case "bottom":
+        console.log("bottom", event)
+        break
+      case "left":
+        console.log("left", event)
+        if (item) {
+          item.chartStyle.width =
+            parseInt(item.chartStyle.width.slice(0, -2)) + 1 + "px"
+        }
+        console.log(item.chartStyle)
+        setItemList([...itemList])
+        break
+    }
   }
 
   function handleDrop(event) {
@@ -215,6 +250,21 @@ const DndByGPT = () => {
     dropIndex.current = null
   }
 
+  // 方向拖拽回调处理
+  function handleArrowDropStart(event, data, index, direction) {
+    dragData.current = data
+    previousDropIndex.current = index
+    arrow.current = direction
+    console.log(`Start Drop:`, event)
+  }
+
+  function handleArrowLeftDropOver(event, index) {
+    event.preventDefault()
+    event.stopPropagation()
+    dropIndex.current = index
+    console.log(`Drop Over:`, event)
+  }
+
   return (
     <>
       <div className={style.content}>
@@ -240,7 +290,7 @@ const DndByGPT = () => {
             {itemList.map((item, index) => (
               <div
                 key={index}
-                onDragOver={(event) => handleDragOver(event, index)}
+                onDragOver={(event) => handleDragOver(event, index, item)}
                 onDrop={handleDrop}
                 style={item.style}
                 className={`${style.grid_item}`}
@@ -254,7 +304,7 @@ const DndByGPT = () => {
                     handleItemStartDrop(event, item, index)
                   }
                   draggable={true}
-                  onDragOver={(event) => handleDragOver(event, index)}
+                  onDragOver={(event) => handleDragOver(event, index, item)}
                   onDrop={handleItemDrop}
                   onClick={(event) => {
                     handleClickItem(event, index)
@@ -263,15 +313,22 @@ const DndByGPT = () => {
                   {item.chart ? (
                     <>
                       {item.chart({
-                        style: { width: '200px', height: '220px' },
+                        style: item.chartStyle,
                       })}
                       <div className={style.arrowTop}></div>
                       <div className={style.arrowRight}></div>
                       <div className={style.arrowBottom}></div>
-                      <div className={style.arrowLeft}></div>
+                      <div
+                        onDragStart={(event) =>
+                          handleArrowDropStart(event, item, index, "left")
+                        }
+                        draggable={true}
+                        // onDrop={handleItemDrop}
+                        className={style.arrowLeft}
+                      ></div>
                     </>
                   ) : (
-                    ''
+                    `${item.name} 请将图表拖拽到此处`
                   )}
 
                   {/* {item.chart ? item.chart : `${item.name} 请将图表拖拽到此处`} */}
