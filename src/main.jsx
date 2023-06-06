@@ -1,17 +1,18 @@
-import React from "react"
-import ReactDOM from "react-dom/client"
+import React from 'react'
+import ReactDOM from 'react-dom/client'
 
-import { createBrowserRouter, RouterProvider } from "react-router-dom"
-import Home from "./home.jsx"
-import TreeDemo from "./tree/Tree.jsx"
-import CollapseDemo from "./collapse/Collapse.jsx"
-import { Charts } from "./charts/Charts.jsx"
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import Home from './home.jsx'
+import TreeDemo from './tree/Tree.jsx'
+import CollapseDemo from './collapse/Collapse.jsx'
+import { Charts } from './charts/Charts.jsx'
 
-import "react-grid-layout/css/styles.css"
-import MyChart from "./dnd/myChart/MyChart.jsx"
-import DndByGPT from "./dnd/DndByGPT.jsx"
-import DndByGptResize from "./dnd/DndByGptResize.jsx"
-import GridLayout from "./dnd/react-grid-layout/GridLayout.jsx"
+import 'react-grid-layout/css/styles.css'
+import MyChart from './dnd/myChart/MyChart.jsx'
+import DndByGPT from './dnd/DndByGPT.jsx'
+import DndByGptResize from './dnd/DndByGptResize.jsx'
+import GridLayout from './dnd/react-grid-layout/GridLayout.jsx'
+import DndV2 from './dnd/tsja/dnd/DndV2.jsx'
 // import '../dist/output.css'
 
 // import Grid2 from './dnd/grid2/Grid2.jsx'
@@ -19,23 +20,23 @@ import GridLayout from "./dnd/react-grid-layout/GridLayout.jsx"
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
     element: <Home />,
   },
   {
-    path: "/tree",
+    path: '/tree',
     element: <TreeDemo />,
   },
   {
-    path: "/collapse",
+    path: '/collapse',
     element: <CollapseDemo />,
   },
   {
-    path: "/charts",
+    path: '/charts',
     element: <Charts />,
   },
   {
-    path: "/dnd",
+    path: '/dnd',
     element: (
       <>
         {/* <Dnd /> */}
@@ -45,7 +46,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/grid",
+    path: '/grid',
     element: (
       <>
         <GridLayout />
@@ -53,16 +54,24 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/myChart",
+    path: '/myChart',
     element: (
       <>
         <MyChart />,
       </>
     ),
   },
+  {
+    path: '/dndV2',
+    element: (
+      <>
+        <DndV2></DndV2>
+      </>
+    ),
+  },
 ])
 
-ReactDOM.createRoot(document.getElementById("root")).render(
+ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     {/* <App /> */}
     <RouterProvider router={router} />

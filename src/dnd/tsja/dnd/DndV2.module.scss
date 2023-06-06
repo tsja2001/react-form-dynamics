@@ -1,0 +1,27 @@
+$width: 900px;
+$hidth: 700px;
+.content {
+  .chartList {
+		display: flex;
+		.item{
+			padding: 20px;
+			border: 1px solid #ccc;
+			
+		}
+  }
+  .dashboardWrap {
+    width: 600px;
+    height: 400px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    .gridItem {
+      border: 1px solid #f0f0f0;
+      .chartItem{
+        background-color: #ccc;
+        width: $width / 4;
+        height: $hidth / 3;
+      }
+    }
+  }
+}
