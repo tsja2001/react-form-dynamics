@@ -1,22 +1,17 @@
 import { useRef, useState } from 'react'
 import style from './DndV2.module.scss'
 import { chartDataList } from './chartDataList'
+import { DIRECTIONS } from './constant'
 import {
   DashboardChartItem,
   deleteChartAtPosition,
   getChartAtPosition,
   getChartAtStartPoint,
+  resizeChart,
   updateChartAtPosition,
   updateChartAtPositionAllData,
 } from './utils/checkElementOverlap'
 import useDimensions from '../../../hock/useDimensions'
-
-const DIRECTIONS = {
-  UP: 'up',
-  DOWN: 'down',
-  LEFT: 'left',
-  RIGHT: 'right',
-}
 
 const DndV2 = () => {
   // 渲染的数据列表
@@ -61,7 +56,6 @@ const DndV2 = () => {
   const dragItemPosition = useRef(null)
   // 记录要调整元素大小的调整方向
   const resizeDirection = useRef(null)
-  
 
   // 从list中选择图表拖动
   const dragChartStartFromList = (event, data) => {
@@ -115,25 +109,13 @@ const DndV2 = () => {
     if (resizeDirection.current) {
       // 如果要调整到的位置区间内没有元素, 则调整大小
       if (!targetElement) {
-        // 向下调整
-        if (resizeDirection.current === DIRECTIONS.DOWN) {
-          // 增加的高度
-          const addHeight = dropIndex.current[1] - dragData.current.endRow
-
-          dragData.current.height += addHeight
-          dragData.current.endRow += addHeight
-
-          console.log('dragData.current new', dragData.current)
-
-          newChartList = updateChartAtPositionAllData(
-            newChartList,
-            [dragData.current.startCol, dragData.current.startRow],
-            dragData.current
-          )
-        }
+        newChartList = resizeChart(
+          newChartList,
+          dropIndex.current,
+          dragData.current,
+          resizeDirection.current
+        )
       }
-
-      
     } else {
       // 如果没有元素, 直接放置
       if (!targetElement) {

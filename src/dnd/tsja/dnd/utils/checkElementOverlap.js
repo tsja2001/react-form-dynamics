@@ -1,131 +1,215 @@
+import { DIRECTIONS } from '../constant'
+
 export class DashboardChartItem {
-	constructor(chart) {
-		this.chart = chart
-		this.width = 1
-		this.height = 1
-		this.startCol = 0
-		this.startRow = 0
-		this.endCol = 0
-		this.endRow = 0
-	}
+  constructor(chart) {
+    this.chart = chart
+    this.width = 1
+    this.height = 1
+    this.startCol = 0
+    this.startRow = 0
+    this.endCol = 0
+    this.endRow = 0
+  }
 }
 
 /**
  * 获取以指定位置为起点的图表 (如果当前位置有图表, 但不是图表的起始点, 则返回null)
  */
 export const getChartAtStartPoint = (chartList, [col, row]) => {
-	return chartList.find((item) => {
-		return item.startCol === col && item.startRow === row
-	})
+  return chartList.find((item) => {
+    return item.startCol === col && item.startRow === row
+  })
 }
 
 /**
  * 获取指定位置的图表(当前位置有图表则返回, 无论当前位置是否是图表的起始点)
  */
 export const getChartAtPosition = (chartList, [col, row]) => {
-	return chartList.find((item) => {
-		let isRowOverlap = false
-		let isColOverlap = false
-		if (item.startCol <= col && item.endCol >= col) {
-			isRowOverlap = true
-		}
-		if (item.startRow <= row && item.endRow >= row) {
-			isColOverlap = true
-		}
+  return chartList.find((item) => {
+    let isRowOverlap = false
+    let isColOverlap = false
+    if (item.startCol <= col && item.endCol >= col) {
+      isRowOverlap = true
+    }
+    if (item.startRow <= row && item.endRow >= row) {
+      isColOverlap = true
+    }
 
-		return isRowOverlap && isColOverlap
-	})
+    return isRowOverlap && isColOverlap
+  })
 }
 
 /**
  * 判断指定位置, 是否有图表
  */
 export const checkChartAtPosition = (chartList, [col, row]) => {
-	return !!getChartAtPosition(chartList, [col, row])
+  return !!getChartAtPosition(chartList, [col, row])
 }
 
 /**
  * 判断指定位置, 是否有图表, 且当前位置是图表的起始点
  */
 export const checkChartAtStartPoint = (chartList, [col, row]) => {
-	return !!getChartAtStartPoint(chartList, [col, row])
+  return !!getChartAtStartPoint(chartList, [col, row])
 }
 
 /**
  * 替换指定位置的图表(替换所有数据)
  */
-export const updateChartAtPositionAllData = (chartList, [col, row], chartItem) => {
-		const resChartList = [...chartList]
+export const updateChartAtPositionAllData = (
+  chartList,
+  [col, row],
+  chartItem
+) => {
+  const resChartList = [...chartList]
 
-		resChartList.forEach((item) => {
-			if (item.startCol === col && item.startRow === row) {
-				// 找到指定位置的图表, 更新图表
-				Object.keys(item).forEach((key) => {
-					item[key] = chartItem[key]
-				})
-			}
-		})
+  resChartList.forEach((item) => {
+    if (item.startCol === col && item.startRow === row) {
+      // 找到指定位置的图表, 更新图表
+      Object.keys(item).forEach((key) => {
+        item[key] = chartItem[key]
+      })
+    }
+  })
 
-		return resChartList
+  return resChartList
 }
 
 /**
  * 更新指定位置的图表的数据(只替换chart数据)
  */
 export const updateChartAtPosition = (chartList, [col, row], chartItem) => {
-	const resChartList = [...chartList]
+  const resChartList = [...chartList]
 
-	resChartList.forEach((item) => {
-		if (item.startCol === col && item.startRow === row) {
-			// 找到指定位置的图表, 更新图表数据
-			item.chart = chartItem.chart
-		}
-	})
+  resChartList.forEach((item) => {
+    if (item.startCol === col && item.startRow === row) {
+      // 找到指定位置的图表, 更新图表数据
+      item.chart = chartItem.chart
+    }
+  })
 
-	return resChartList
+  return resChartList
 }
 
 /**
  * 删除指定位置的图表
  */
 export const deleteChartAtPosition = (chartList, [col, row]) => {
-	const target = getChartAtPosition(chartList, [col, row])
+  const target = getChartAtPosition(chartList, [col, row])
 
-	// console.log('删除前 chartList', chartList)
-	if (target) {
-		const res = chartList.filter((item) => {
-			return item !== target
-		})
+  // console.log('删除前 chartList', chartList)
+  if (target) {
+    const res = chartList.filter((item) => {
+      return item !== target
+    })
 
-		// console.log('删除后 chartList', res)
+    // console.log('删除后 chartList', res)
 
-		return res
-	}
+    return res
+  }
 
-
-	return chartList
+  return chartList
 }
 
 /**
  * 判断当前拖拽的图表是否和已有的图表重叠
- * 
+ *
  * @param {*} chartList 当前显示的图表list
- * @param {*} [col, row] 当前拖拽的图表的位置 
- * @returns 
+ * @param {*} [col, row] 当前拖拽的图表的位置
+ * @returns
  */
 export const checkElementOverlap = (chartList, [col, row]) => {
-	const res = chartList.find((item) => {
-		let isRowOverlap = false
-		let isColOverlap = false
-		if (item.startCol <= col && item.endCol >= col) {
-			isRowOverlap = true
-		}
-		if (item.startRow <= row && item.endRow >= row) {
-			isColOverlap = true
-		}
+  const res = chartList.find((item) => {
+    let isRowOverlap = false
+    let isColOverlap = false
+    if (item.startCol <= col && item.endCol >= col) {
+      isRowOverlap = true
+    }
+    if (item.startRow <= row && item.endRow >= row) {
+      isColOverlap = true
+    }
 
-		return isRowOverlap && isColOverlap
-	})
+    return isRowOverlap && isColOverlap
+  })
 
-	return !!res
+  return !!res
+}
+
+/**
+ * 调整图表大小
+ */
+export const resizeChart = (
+  chartList,
+  [col, row],
+  resizeChartItem,
+  direction
+) => {
+  // console.log('resizeChart', chartList, [col, row], resizeChartItem, direction)
+
+  const resChartList = [...chartList]
+
+  // 向下调整
+  if (direction === DIRECTIONS.DOWN) {
+    const addHeight = row - resizeChartItem.endRow
+
+    resChartList.forEach((item) => {
+      if (
+        item.startCol === resizeChartItem.startCol &&
+        item.startRow === resizeChartItem.startRow
+      ) {
+        item.height += addHeight
+        item.endRow += addHeight
+      }
+    })
+
+    return resChartList
+  }
+
+  if (direction === DIRECTIONS.RIGHT) {
+    const addWidth = col - resizeChartItem.endCol
+
+    resChartList.forEach((item) => {
+      if (
+        item.startCol === resizeChartItem.startCol &&
+        item.startRow === resizeChartItem.startRow
+      ) {
+        item.width += addWidth
+        item.endCol += addWidth
+      }
+    })
+
+    return resChartList
+  }
+
+  if (direction === DIRECTIONS.UP) {
+    const addHeight = resizeChartItem.startRow - row
+
+    resChartList.forEach((item) => {
+      if (
+        item.startCol === resizeChartItem.startCol &&
+        item.startRow === resizeChartItem.startRow
+      ) {
+        item.height += addHeight
+        item.startRow -= addHeight
+      }
+    })
+
+    return resChartList
+  }
+
+  if (direction === DIRECTIONS.LEFT) {
+    const addWidth = resizeChartItem.startCol - col
+
+    resChartList.forEach((item) => {
+      if (
+        item.startCol === resizeChartItem.startCol &&
+        item.startRow === resizeChartItem.startRow
+      ) {
+        item.width += addWidth
+        item.startCol -= addWidth
+      }
+    })
+
+    return resChartList
+  }
 }
