@@ -2,11 +2,13 @@ import { useRef, useState } from 'react'
 import style from './DndV2.module.scss'
 import { chartDataList } from './chartDataList'
 import {
+  DashboardChartItem,
   checkChartAtPosition,
   checkChartAtStartPoint,
   deleteChartAtPosition,
   getChartAtPosition,
   getChartAtStartPoint,
+  updateChartAtPosition,
 } from './utils/checkElementOverlap'
 import useDimensions from '../../../hock/useDimensions'
 
@@ -64,7 +66,7 @@ const DndV2 = () => {
   // 从list中选择图表拖动
   const dragChartStartFromList = (event, data) => {
     // dragData.current = data
-    dragData.current = data
+    dragData.current = new DashboardChartItem(data)
   }
 
   // 从dashboard的item拖动以调整位置
@@ -133,26 +135,23 @@ const DndV2 = () => {
     let newChartList = [...chartList]
 
     // 查看要放置的位置是否已经有元素
-    const targetElement = getChartAtPosition(newChartList, dropIndex.current)
+    // const targetElement = getChartAtPosition(newChartList, dropIndex.current)
+    let targetElement = getChartAtPosition(newChartList, dropIndex.current)
 
     // 如果没有元素, 直接放置
     if (!targetElement) {
-      const currentItem = {
-        chart: dragData.current,
-        width: 1,
-        height: 1,
-        startCol: dropIndex.current[0],
-        startRow: dropIndex.current[1],
-        endCol: dropIndex.current[0],
-        endRow: dropIndex.current[1],
-      }
+      dragData.current.startCol = dropIndex.current[0]
+      dragData.current.startRow = dropIndex.current[1]
+      dragData.current.endCol = dropIndex.current[0]
+      dragData.current.endRow = dropIndex.current[1]
 
-      newChartList.push(currentItem)
+      newChartList.push(dragData.current)
     }
 
     // 如果有元素, 进行替换
     if (targetElement) {
-      targetElement.chart = dragData.current
+      // targetElement = dragData.current
+      newChartList = updateChartAtPosition(newChartList, dropIndex.current, dragData.current)
     }
 
     // 如果是拖动item调整位置
@@ -218,8 +217,8 @@ const DndV2 = () => {
                         className={style.chartItem}
                         draggable={true}
                         style={{
-                          width: (dashboardSize.width / 4) * chartItem.width,
-                          height: (dashboardSize.height / 3) * chartItem.height,
+                          width: (dashboardSize.width / 4) * chartItem.width ?? 'auto',
+                          height: (dashboardSize.height / 3) * chartItem.height ?? 'auto',
                         }}
                         // 拖拽item调整位置
                         onDragStart={(event) =>

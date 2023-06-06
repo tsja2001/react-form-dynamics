@@ -52,6 +52,24 @@ export const checkChartAtStartPoint = (chartList, [col, row]) => {
 }
 
 /**
+ * 更新指定位置的图表
+ */
+export const updateChartAtPosition = (chartList, [col, row], chartItem) => {
+		const resChartList = [...chartList]
+
+		resChartList.forEach((item) => {
+			if (item.startCol === col && item.startRow === row) {
+				// 找到指定位置的图表, 更新图表
+				Object.keys(item).forEach((key) => {
+					item[key] = chartItem[key]
+				})
+			}
+		})
+
+		return resChartList
+}
+
+/**
  * 删除指定位置的图表
  */
 export const deleteChartAtPosition = (chartList, [col, row]) => {
