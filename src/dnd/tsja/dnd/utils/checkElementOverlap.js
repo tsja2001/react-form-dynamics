@@ -17,6 +17,13 @@ export const getChartAtPosition = (chartList, [col, row]) => {
 }
 
 /**
+ * 判断指定位置, 是否有图表
+ */
+export const checkChartAtPosition = (chartList, [col, row]) => {
+	return !!getChartAtPosition(chartList, [col, row])
+}
+
+/**
  * 删除指定位置的图表
  */
 export const deleteChartAtPosition = (chartList, [col, row]) => {

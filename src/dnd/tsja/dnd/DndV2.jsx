@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import style from './DndV2.module.scss'
 import { chartDataList } from './chartDataList'
 import {
+  checkChartAtPosition,
   deleteChartAtPosition,
   getChartAtPosition,
 } from './utils/checkElementOverlap'
@@ -175,14 +176,15 @@ const DndV2 = () => {
                     ⬅️
                   </div>
                   {
-                    chartList.find((item) => {
-                      if (
-                        item.startCol === colIndex &&
-                        item.startRow === rowIndex
-                      ) {
-                        return true
-                      }
-                    })?.chart?.chart
+                    // 如果当前位置有元素, 显示元素
+                    checkChartAtPosition(chartList, [colIndex, rowIndex]) && (
+                      <div className={style.inner}>
+                        {
+                          getChartAtPosition(chartList, [colIndex, rowIndex])
+                            .chart.chart
+                        }
+                      </div>
+                    )
                   }
                 </div>
               </div>
