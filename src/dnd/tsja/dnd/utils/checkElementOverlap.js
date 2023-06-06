@@ -52,9 +52,9 @@ export const checkChartAtStartPoint = (chartList, [col, row]) => {
 }
 
 /**
- * 更新指定位置的图表
+ * 替换指定位置的图表(替换所有数据)
  */
-export const updateChartAtPosition = (chartList, [col, row], chartItem) => {
+export const updateChartAtPositionAllData = (chartList, [col, row], chartItem) => {
 		const resChartList = [...chartList]
 
 		resChartList.forEach((item) => {
@@ -67,6 +67,22 @@ export const updateChartAtPosition = (chartList, [col, row], chartItem) => {
 		})
 
 		return resChartList
+}
+
+/**
+ * 更新指定位置的图表的数据(只替换chart数据)
+ */
+export const updateChartAtPosition = (chartList, [col, row], chartItem) => {
+	const resChartList = [...chartList]
+
+	resChartList.forEach((item) => {
+		if (item.startCol === col && item.startRow === row) {
+			// 找到指定位置的图表, 更新图表数据
+			item.chart = chartItem.chart
+		}
+	})
+
+	return resChartList
 }
 
 /**
@@ -89,9 +105,6 @@ export const deleteChartAtPosition = (chartList, [col, row]) => {
 
 	return chartList
 }
-
-
-
 
 /**
  * 判断当前拖拽的图表是否和已有的图表重叠

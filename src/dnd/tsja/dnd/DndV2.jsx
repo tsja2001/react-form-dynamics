@@ -3,12 +3,11 @@ import style from './DndV2.module.scss'
 import { chartDataList } from './chartDataList'
 import {
   DashboardChartItem,
-  checkChartAtPosition,
-  checkChartAtStartPoint,
   deleteChartAtPosition,
   getChartAtPosition,
   getChartAtStartPoint,
   updateChartAtPosition,
+  updateChartAtPositionAllData,
 } from './utils/checkElementOverlap'
 import useDimensions from '../../../hock/useDimensions'
 
@@ -22,15 +21,15 @@ const DIRECTIONS = {
 const DndV2 = () => {
   // 渲染的数据列表
   const [chartList, setChartList] = useState([
-    {
-      chart: chartDataList[0],
-      width: 2,
-      height: 2,
-      startCol: 2,
-      startRow: 1,
-      endCol: 3,
-      endRow: 2,
-    },
+    // {
+    //   chart: chartDataList[0],
+    //   width: 2,
+    //   height: 2,
+    //   startCol: 2,
+    //   startRow: 1,
+    //   endCol: 3,
+    //   endRow: 2,
+    // },
     // {
     //   chart: chartDataList[1],
     //   width: 1,
@@ -62,6 +61,7 @@ const DndV2 = () => {
   const dragItemPosition = useRef(null)
   // 记录要调整元素大小的调整方向
   const resizeDirection = useRef(null)
+  
 
   // 从list中选择图表拖动
   const dragChartStartFromList = (event, data) => {
@@ -77,8 +77,8 @@ const DndV2 = () => {
     dragItemPosition.current = [col, row]
     // 将正在拖动的元素设置到dragData中
     if (targetElement) {
-      dragData.current = { ...targetElement.chart }
-      // dragData.current = { ...targetElement }
+      // dragData.current = { ...targetElement.chart }
+      dragData.current = { ...targetElement }
     }
   }
 
@@ -104,67 +104,68 @@ const DndV2 = () => {
 
   // 鼠标松开, 结束拖动
   const chartChartDrop = (event) => {
-    // 查看要放置的位置是否已经有元素
-    // const targetElement = getChartAtPosition(newChartList, dropIndex.current)
-
-    // 如果是调整大小
-    if (resizeDirection.current) {
-      // 如果要调整到的位置区间内没有元素, 则调整大小
-      // todo 判断元素碰撞
-      if (!targetElement) {
-        // todo: 判断是否超出边界
-        // 现在去做根据chartList的元素配置, 显示item大小去了
-        // const currentItem = {
-        //   chart: dragData.current,
-        //   width: resizeDirection.current[0] + 1,
-        //   height: resizeDirection.current[1] + 1,
-        //   startCol: dropIndex.current[0],
-        //   startRow: dropIndex.current[1],
-        //   endCol: dropIndex.current[0] + resizeDirection.current[0],
-        //   endRow: dropIndex.current[1] + resizeDirection.current[1],
-        // }
-      }
-
-      resizeDirection.current = null
-      return
-    }
-
     event.preventDefault()
     event.stopPropagation()
 
     let newChartList = [...chartList]
-
     // 查看要放置的位置是否已经有元素
-    // const targetElement = getChartAtPosition(newChartList, dropIndex.current)
     let targetElement = getChartAtPosition(newChartList, dropIndex.current)
 
-    // 如果没有元素, 直接放置
-    if (!targetElement) {
-      dragData.current.startCol = dropIndex.current[0]
-      dragData.current.startRow = dropIndex.current[1]
-      dragData.current.endCol = dropIndex.current[0]
-      dragData.current.endRow = dropIndex.current[1]
+    // 如果是调整大小
+    if (resizeDirection.current) {
+      // 如果要调整到的位置区间内没有元素, 则调整大小
+      if (!targetElement) {
+        // 向下调整
+        if (resizeDirection.current === DIRECTIONS.DOWN) {
+          // 增加的高度
+          const addHeight = dropIndex.current[1] - dragData.current.endRow
 
-      newChartList.push(dragData.current)
-    }
+          dragData.current.height += addHeight
+          dragData.current.endRow += addHeight
 
-    // 如果有元素, 进行替换
-    if (targetElement) {
-      // targetElement = dragData.current
-      newChartList = updateChartAtPosition(newChartList, dropIndex.current, dragData.current)
-    }
+          console.log('dragData.current new', dragData.current)
 
-    // 如果是拖动item调整位置
-    if (dragItemPosition.current) {
-      // 判读拖动item是否在原位置, 如果不在, 删除原位置的元素
-      if (
-        dragItemPosition.current[0] !== dropIndex.current[0] ||
-        dragItemPosition.current[1] !== dropIndex.current[1]
-      ) {
-        newChartList = deleteChartAtPosition(
+          newChartList = updateChartAtPositionAllData(
+            newChartList,
+            [dragData.current.startCol, dragData.current.startRow],
+            dragData.current
+          )
+        }
+      }
+
+      
+    } else {
+      // 如果没有元素, 直接放置
+      if (!targetElement) {
+        dragData.current.startCol = dropIndex.current[0]
+        dragData.current.startRow = dropIndex.current[1]
+        dragData.current.endCol = dropIndex.current[0]
+        dragData.current.endRow = dropIndex.current[1]
+
+        newChartList.push(dragData.current)
+      }
+
+      // 如果有元素, 进行替换
+      if (targetElement) {
+        newChartList = updateChartAtPosition(
           newChartList,
-          dragItemPosition.current
+          dropIndex.current,
+          dragData.current
         )
+      }
+
+      // 如果是拖动item调整位置
+      if (dragItemPosition.current) {
+        // 判读拖动item是否在原位置, 如果不在, 删除原位置的元素
+        if (
+          dragItemPosition.current[0] !== dropIndex.current[0] ||
+          dragItemPosition.current[1] !== dropIndex.current[1]
+        ) {
+          newChartList = deleteChartAtPosition(
+            newChartList,
+            dragItemPosition.current
+          )
+        }
       }
     }
 
@@ -173,6 +174,7 @@ const DndV2 = () => {
     dragData.current = null
     dropIndex.current = null
     dragItemPosition.current = null
+    resizeDirection.current = null
   }
 
   return (
@@ -217,8 +219,12 @@ const DndV2 = () => {
                         className={style.chartItem}
                         draggable={true}
                         style={{
-                          width: (dashboardSize.width / 4) * chartItem.width ?? 'auto',
-                          height: (dashboardSize.height / 3) * chartItem.height ?? 'auto',
+                          width:
+                            (dashboardSize.width / 4) * chartItem.width ??
+                            'auto',
+                          height:
+                            (dashboardSize.height / 3) * chartItem.height ??
+                            'auto',
                         }}
                         // 拖拽item调整位置
                         onDragStart={(event) =>
