@@ -1,5 +1,26 @@
+export class DashboardChartItem {
+	constructor(chart) {
+		this.chart = chart
+		this.width = 1
+		this.height = 1
+		this.startCol = 0
+		this.startRow = 0
+		this.endCol = 0
+		this.endRow = 0
+	}
+}
+
 /**
- * 获取指定位置的图表
+ * 获取以指定位置为起点的图表 (如果当前位置有图表, 但不是图表的起始点, 则返回null)
+ */
+export const getChartAtStartPoint = (chartList, [col, row]) => {
+	return chartList.find((item) => {
+		return item.startCol === col && item.startRow === row
+	})
+}
+
+/**
+ * 获取指定位置的图表(当前位置有图表则返回, 无论当前位置是否是图表的起始点)
  */
 export const getChartAtPosition = (chartList, [col, row]) => {
 	return chartList.find((item) => {
@@ -21,6 +42,13 @@ export const getChartAtPosition = (chartList, [col, row]) => {
  */
 export const checkChartAtPosition = (chartList, [col, row]) => {
 	return !!getChartAtPosition(chartList, [col, row])
+}
+
+/**
+ * 判断指定位置, 是否有图表, 且当前位置是图表的起始点
+ */
+export const checkChartAtStartPoint = (chartList, [col, row]) => {
+	return !!getChartAtStartPoint(chartList, [col, row])
 }
 
 /**

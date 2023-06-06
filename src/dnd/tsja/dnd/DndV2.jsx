@@ -3,24 +3,67 @@ import style from './DndV2.module.scss'
 import { chartDataList } from './chartDataList'
 import {
   checkChartAtPosition,
+  checkChartAtStartPoint,
   deleteChartAtPosition,
   getChartAtPosition,
+  getChartAtStartPoint,
 } from './utils/checkElementOverlap'
+import useDimensions from '../../../hock/useDimensions'
+
+const DIRECTIONS = {
+  UP: 'up',
+  DOWN: 'down',
+  LEFT: 'left',
+  RIGHT: 'right',
+}
 
 const DndV2 = () => {
   // 渲染的数据列表
-  const [chartList, setChartList] = useState([])
+  const [chartList, setChartList] = useState([
+    {
+      chart: chartDataList[0],
+      width: 2,
+      height: 2,
+      startCol: 2,
+      startRow: 1,
+      endCol: 3,
+      endRow: 2,
+    },
+    // {
+    //   chart: chartDataList[1],
+    //   width: 1,
+    //   height: 1,
+    //   startCol: 1,
+    //   startRow: 1,
+    //   endCol: 1,
+    //   endRow: 1,
+    // },
+    // {
+    //   chart: chartDataList[2],
+    //   width: 1,
+    //   height: 1,
+    //   startCol: 1,
+    //   startRow: 0,
+    //   endCol: 1,
+    //   endRow: 0,
+    // },
+  ])
+  // 整个图表的ref
+  const dashboardRef = useRef(null)
+  // 整个图表的宽高
+  const dashboardSize = useDimensions(dashboardRef)
   // 当前拖拽数据
   const dragData = useRef(null)
   // 当前鼠标拖动的元素, 要放置的目标索引
   const dropIndex = useRef(null)
   // 当拖动item时调整位置时, 记录当前拖动的元素位置, 用于拖动结束后删除元素
   const dragItemPosition = useRef(null)
-  // 当前是否在调整大侠
-  const isResize = useRef(false)
+  // 记录要调整元素大小的调整方向
+  const resizeDirection = useRef(null)
 
   // 从list中选择图表拖动
   const dragChartStartFromList = (event, data) => {
+    // dragData.current = data
     dragData.current = data
   }
 
@@ -33,13 +76,21 @@ const DndV2 = () => {
     // 将正在拖动的元素设置到dragData中
     if (targetElement) {
       dragData.current = { ...targetElement.chart }
+      // dragData.current = { ...targetElement }
     }
   }
 
   // 从dashboard的dragBar拖动以调整大小 (todo考虑和拖动调整位置合并)
-  const dragResizeStartFromDragBar = (event, data) => {
-    isResize.current = true
-    dragData.current = data
+  const dragResizeStartFromDragBar = (event, [col, row], position) => {
+    resizeDirection.current = position
+
+    const targetElement = getChartAtPosition(chartList, [col, row])
+    // 记录当前拖动的元素位置
+    dragItemPosition.current = [col, row]
+    // 将正在拖动的元素设置到dragData中
+    if (targetElement) {
+      dragData.current = { ...targetElement.chart }
+    }
   }
 
   // 鼠标拖动路过元素
@@ -51,9 +102,28 @@ const DndV2 = () => {
 
   // 鼠标松开, 结束拖动
   const chartChartDrop = (event) => {
-    // 如果是调整大小, 不进行处理
-    if (isResize.current) {
-      isResize.current = false
+    // 查看要放置的位置是否已经有元素
+    // const targetElement = getChartAtPosition(newChartList, dropIndex.current)
+
+    // 如果是调整大小
+    if (resizeDirection.current) {
+      // 如果要调整到的位置区间内没有元素, 则调整大小
+      // todo 判断元素碰撞
+      if (!targetElement) {
+        // todo: 判断是否超出边界
+        // 现在去做根据chartList的元素配置, 显示item大小去了
+        // const currentItem = {
+        //   chart: dragData.current,
+        //   width: resizeDirection.current[0] + 1,
+        //   height: resizeDirection.current[1] + 1,
+        //   startCol: dropIndex.current[0],
+        //   startRow: dropIndex.current[1],
+        //   endCol: dropIndex.current[0] + resizeDirection.current[0],
+        //   endRow: dropIndex.current[1] + resizeDirection.current[1],
+        // }
+      }
+
+      resizeDirection.current = null
       return
     }
 
@@ -121,16 +191,13 @@ const DndV2 = () => {
           </div>
         ))}
       </div>
-      <div className={style.dashboardWrap}>
+      <div>width: {dashboardSize.width}</div>
+      <div>height: {dashboardSize.height}</div>
+      <div className={style.dashboardWrap} ref={dashboardRef}>
         {Array.from({ length: 3 }).map((item, rowIndex) => {
           return Array.from({ length: 4 }).map((item, colIndex) => {
             return (
               <div
-                draggable={true}
-                // 拖拽item调整位置
-                onDragStart={(event) =>
-                  dragChartStartFromDashboard(event, [colIndex, rowIndex])
-                }
                 // 松开鼠标, 放下元素
                 onDrop={chartChartDrop}
                 // 路过元素, 记录位置
@@ -138,55 +205,87 @@ const DndV2 = () => {
                 className={style.gridItem}
                 key={`${rowIndex}-${colIndex}`}
               >
-                <div className={style.chartItem}>
-                  <div
-                    onDragStart={(event) =>
-                      dragResizeStartFromDragBar(event, [colIndex, rowIndex])
-                    }
-                    draggable={true}
-                    className={`${style.dragBar} ${style.dragBarTop}`}
-                  >
-                    ⬆️
-                  </div>
-                  <div
-                    onDragStart={(event) =>
-                      dragResizeStartFromDragBar(event, [colIndex, rowIndex])
-                    }
-                    draggable={true}
-                    className={`${style.dragBar} ${style.dragBarRight}`}
-                  >
-                    ➡️
-                  </div>
-                  <div
-                    onDragStart={(event) =>
-                      dragResizeStartFromDragBar(event, [colIndex, rowIndex])
-                    }
-                    draggable={true}
-                    className={`${style.dragBar} ${style.dragBarBotton}`}
-                  >
-                    ⬇️
-                  </div>
-                  <div
-                    onDragStart={(event) =>
-                      dragResizeStartFromDragBar(event, [colIndex, rowIndex])
-                    }
-                    draggable={true}
-                    className={`${style.dragBar} ${style.dragBarLeft}`}
-                  >
-                    ⬅️
-                  </div>
-                  {
-                    // 如果当前位置有元素, 显示元素
-                    checkChartAtPosition(chartList, [colIndex, rowIndex]) && (
-                      <div className={style.inner}>
-                        {
-                          getChartAtPosition(chartList, [colIndex, rowIndex])
-                            .chart.chart
+                {(() => {
+                  const chartItem = getChartAtStartPoint(chartList, [
+                    colIndex,
+                    rowIndex,
+                  ])
+
+                  // 如果当前位置有元素, 显示元素
+                  if (chartItem) {
+                    return (
+                      <div
+                        className={style.chartItem}
+                        draggable={true}
+                        style={{
+                          width: (dashboardSize.width / 4) * chartItem.width,
+                          height: (dashboardSize.height / 3) * chartItem.height,
+                        }}
+                        // 拖拽item调整位置
+                        onDragStart={(event) =>
+                          dragChartStartFromDashboard(event, [
+                            colIndex,
+                            rowIndex,
+                          ])
                         }
+                      >
+                        <div
+                          onDragStart={(event) =>
+                            dragResizeStartFromDragBar(
+                              event,
+                              [colIndex, rowIndex],
+                              DIRECTIONS.UP
+                            )
+                          }
+                          draggable={true}
+                          className={`${style.dragBar} ${style.dragBarTop}`}
+                        >
+                          ⬆️
+                        </div>
+                        <div
+                          onDragStart={(event) =>
+                            dragResizeStartFromDragBar(
+                              event,
+                              [colIndex, rowIndex],
+                              DIRECTIONS.RIGHT
+                            )
+                          }
+                          draggable={true}
+                          className={`${style.dragBar} ${style.dragBarRight}`}
+                        >
+                          ➡️
+                        </div>
+                        <div
+                          onDragStart={(event) =>
+                            dragResizeStartFromDragBar(
+                              event,
+                              [colIndex, rowIndex],
+                              DIRECTIONS.DOWN
+                            )
+                          }
+                          draggable={true}
+                          className={`${style.dragBar} ${style.dragBarBotton}`}
+                        >
+                          ⬇️
+                        </div>
+                        <div
+                          onDragStart={(event) =>
+                            dragResizeStartFromDragBar(
+                              event,
+                              [colIndex, rowIndex],
+                              DIRECTIONS.LEFT
+                            )
+                          }
+                          draggable={true}
+                          className={`${style.dragBar} ${style.dragBarLeft}`}
+                        >
+                          ⬅️
+                        </div>
+                        {chartItem.chart.chart}
                       </div>
                     )
                   }
-                </div>
+                })()}
               </div>
             )
           })
