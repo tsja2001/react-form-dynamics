@@ -5,6 +5,7 @@ import { DASHBOARD_SIZE, DIRECTIONS } from './constant'
 import {
   DashboardChartItem,
   deleteChartAtPosition,
+  deleteChartById,
   getChartAtPosition,
   getChartAtStartPoint,
   getColAndRow,
@@ -13,6 +14,7 @@ import {
   updateChartAtPosition,
 } from './utils/checkElementOverlap'
 import useDimensions from '../../../hock/useDimensions'
+import { deleteChart } from './utils/checkElementOverlap'
 
 const DndV2 = () => {
   // 渲染的数据列表
@@ -23,8 +25,10 @@ const DndV2 = () => {
   const dashboardSize = useDimensions(dashboardRef)
   // 当前拖拽数据
   const dragData = useRef(null)
+  // 鼠标从dashboard中开始拖拽时, 鼠标所在的位置(用于拖动长或者宽大大于1的元素时, 记录鼠标位置)
+  const dragStartPoint = useRef(null)
   // 当前鼠标拖动的元素, 要放置的目标索引
-  const dropIndex = useRef(null)
+  const dropPosition = useRef(null)
   // 当拖动item时调整位置时, 记录当前拖动的元素位置, 用于拖动结束后删除元素
   const dragItemPosition = useRef(null)
   // 记录要调整元素大小的调整方向
@@ -46,6 +50,10 @@ const DndV2 = () => {
     if (targetElement) {
       dragData.current = { ...targetElement }
     }
+    dragStartPoint.current = getColAndRow(dashboardRef.current, [
+      event.clientX,
+      event.clientY,
+    ])
   }
 
   // 从dashboard的dragBar拖动以调整大小 (todo考虑和拖动调整位置合并)
@@ -65,7 +73,7 @@ const DndV2 = () => {
   const dragOver = (event, index) => {
     event.preventDefault()
     event.stopPropagation()
-    dropIndex.current = index
+    dropPosition.current = index
   }
 
   // 鼠标松开, 结束拖动
@@ -75,7 +83,7 @@ const DndV2 = () => {
 
     let newChartList = [...chartList]
     // 查看要放置的位置是否已经有元素
-    let targetElement = getChartAtPosition(newChartList, dropIndex.current)
+    let targetElement = getChartAtPosition(newChartList, dropPosition.current)
 
     // 如果是调整大小
     if (resizeDirection.current) {
@@ -94,19 +102,18 @@ const DndV2 = () => {
       )
 
       newChartList = resizedChartList
-    } 
+    }
     // 如果是拖动图表
     else {
-      
-
       // 如果要放置的位置没有元素, 直接放置
       if (!targetElement) {
         const cloneDragData = { ...dragData.current }
 
-        cloneDragData.startCol = dropIndex.current[0]
-        cloneDragData.startRow = dropIndex.current[1]
-        cloneDragData.endCol = dropIndex.current[0] + cloneDragData.width - 1
-        cloneDragData.endRow = dropIndex.current[1] + cloneDragData.height - 1
+        cloneDragData.startCol = dropPosition.current[0]
+        cloneDragData.startRow = dropPosition.current[1]
+        cloneDragData.endCol = dropPosition.current[0] + cloneDragData.width - 1
+        cloneDragData.endRow =
+          dropPosition.current[1] + cloneDragData.height - 1
 
         // 判断拖拽后的元素是否超越dashboard的边界
         const isOutDashboard = isChartOutDashboard(
@@ -125,24 +132,48 @@ const DndV2 = () => {
       // 如果要放置的位置有元素
       if (targetElement) {
         // 如果要放置的位置的元素和拖动的元素不是同一个元素, 直接替换
-        // if (targetElement.id !== dragData.current.id) {
+        if (targetElement.id !== dragData.current.id) {
+          newChartList = updateChartAtPosition(
+            newChartList,
+            dropPosition.current,
+            dragData.current
+          )
+        }
+        // 如果要放置的位置的元素和拖动的元素是同一个元素, 此时可能是调整一个元素的位置. 这个元素的宽或者高必须大于1
+        else {
+          if (dragData.current.width > 1 || dragData.current.height > 1) {
+            const cloneDragData = { ...dragData.current }
 
-        // }
+            const dropLocation = getColAndRow(dashboardRef.current, [
+              event.clientX,
+              event.clientY,
+            ])
+            cloneDragData.startCol = dropLocation[0]
+            cloneDragData.startRow = dropLocation[1]
+            cloneDragData.endCol = dropLocation[0] + cloneDragData.width - 1
+            cloneDragData.endRow = dropLocation[1] + cloneDragData.height - 1
 
-        console.log('targetElement === dragData.current', targetElement.id === dragData.current.id)
-        newChartList = updateChartAtPosition(
-          newChartList,
-          dropIndex.current,
-          dragData.current
-        )
+            // 判断拖拽后的元素是否超越dashboard的边界
+            const isOutDashboard = isChartOutDashboard(
+              cloneDragData,
+              DASHBOARD_SIZE
+            )
+            if (isOutDashboard) {
+              console.log('放在此位置会超出边界')
+            } else {
+              newChartList = deleteChartById(newChartList, dragData.current.id)
+              newChartList.push(cloneDragData)
+            }
+          }
+        }
       }
 
       // 如果是拖动item调整位置
       if (dragItemPosition.current) {
         // 判读拖动item是否在原位置, 如果不在, 删除原位置的元素
         if (
-          dragItemPosition.current[0] !== dropIndex.current[0] ||
-          dragItemPosition.current[1] !== dropIndex.current[1]
+          dragItemPosition.current[0] !== dropPosition.current[0] ||
+          dragItemPosition.current[1] !== dropPosition.current[1]
         ) {
           newChartList = deleteChartAtPosition(
             newChartList,
@@ -155,7 +186,7 @@ const DndV2 = () => {
     setChartList([...newChartList])
 
     dragData.current = null
-    dropIndex.current = null
+    dropPosition.current = null
     dragItemPosition.current = null
     resizeDirection.current = null
   }

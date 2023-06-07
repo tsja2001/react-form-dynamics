@@ -121,10 +121,31 @@ export const deleteChartAtPosition = (chartList, [col, row]) => {
  */
 export const deleteChart = (chartList, target) => {
   const res = chartList.filter((item) => {
+    console.log(item, target)
+    console.log(item === target)
     return item !== target
   })
 
   return res
+}
+
+/**
+ * 通过id删除指定图表
+ */
+export const deleteChartById = (chartList, id) => {
+  const target = chartList.find((item) => {
+    return item.id === id
+  })
+
+  if (target) {
+    const res = chartList.filter((item) => {
+      return item !== target
+    })
+
+    return res
+  }
+
+  return chartList
 }
 
 /**
