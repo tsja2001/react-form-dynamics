@@ -183,7 +183,6 @@ export const checkElementOverlap = (chartList, targetChart) => {
       isPointInRect([itemECol, itemERow], targetPositon)
 
     if (isTargetPointInItem || isItemPointInTarget) {
-      console.log('有重叠')
       isOverlap = true
     }
   })

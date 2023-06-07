@@ -4,6 +4,7 @@ import { chartDataList } from './chartDataList'
 import { DASHBOARD_SIZE, DIRECTIONS } from './constant'
 import {
   DashboardChartItem,
+  checkElementOverlap,
   deleteChartAtPosition,
   deleteChartById,
   getChartAtPosition,
@@ -105,7 +106,7 @@ const DndV2 = () => {
     }
     // 如果是拖动图表
     else {
-      // 如果要放置的位置没有元素, 直接放置
+      // 如果要放置的位置没有元素, 判断拖拽后的元素放之后是否会和其他元素重叠(比如拖动一个宽度为2的元素, 放置在一个宽度为1的元素后面)
       if (!targetElement) {
         const cloneDragData = { ...dragData.current }
 
@@ -121,8 +122,21 @@ const DndV2 = () => {
           DASHBOARD_SIZE
         )
 
+        // 如果当前拖拽的元素长或者宽大于1, 则需要判断拖拽后的元素是否会和其他元素重叠
+        const chartListWithoutDragItem = chartList.filter((item) => {
+          return item.id !== dragData.current.id
+        })
+
+        const isOverlap = checkElementOverlap(
+          chartListWithoutDragItem,
+          cloneDragData
+        )
+
         if (isOutDashboard) {
           console.log('放在此位置会超出边界')
+          newChartList.push(dragData.current)
+        } else if (isOverlap) {
+          console.log('放在此位置会重叠')
           newChartList.push(dragData.current)
         } else {
           newChartList.push(cloneDragData)
@@ -210,10 +224,14 @@ const DndV2 = () => {
       <button>撤回</button>
       <div>width: {dashboardSize.width}</div>
       <div>height: {dashboardSize.height}</div>
-      <div className={style.dashboardWrap} ref={dashboardRef} style={{
-        gridTemplateColumns: `repeat(${DASHBOARD_SIZE[0]}, 1fr)`,
-        gridTemplateRows: `repeat(${DASHBOARD_SIZE[1]}, 1fr)`,
-      }}>
+      <div
+        className={style.dashboardWrap}
+        ref={dashboardRef}
+        style={{
+          gridTemplateColumns: `repeat(${DASHBOARD_SIZE[0]}, 1fr)`,
+          gridTemplateRows: `repeat(${DASHBOARD_SIZE[1]}, 1fr)`,
+        }}
+      >
         {Array.from({ length: DASHBOARD_SIZE[1] }).map((item, rowIndex) => {
           return Array.from({ length: DASHBOARD_SIZE[0] }).map(
             (item, colIndex) => {
