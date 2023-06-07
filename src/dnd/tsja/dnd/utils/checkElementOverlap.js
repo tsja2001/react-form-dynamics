@@ -40,7 +40,7 @@ export const getChartAtPosition = (chartList, [col, row]) => {
 }
 
 /**
- * 判断指定位置, 是否有图表
+ * 判断指定位置, 是否有图表 (当前位置有图表则返回true, 无论当前位置是否是图表的起始点)
  */
 export const checkChartAtPosition = (chartList, [col, row]) => {
   return !!getChartAtPosition(chartList, [col, row])
@@ -97,13 +97,10 @@ export const updateChartAtPosition = (chartList, [col, row], chartItem) => {
 export const deleteChartAtPosition = (chartList, [col, row]) => {
   const target = getChartAtPosition(chartList, [col, row])
 
-  // console.log('删除前 chartList', chartList)
   if (target) {
     const res = chartList.filter((item) => {
       return item !== target
     })
-
-    // console.log('删除后 chartList', res)
 
     return res
   }
@@ -112,27 +109,85 @@ export const deleteChartAtPosition = (chartList, [col, row]) => {
 }
 
 /**
- * 判断当前拖拽的图表是否和已有的图表重叠
- *
- * @param {*} chartList 当前显示的图表list
- * @param {*} [col, row] 当前拖拽的图表的位置
- * @returns
+ * 删除指定图表
  */
-export const checkElementOverlap = (chartList, [col, row]) => {
-  const res = chartList.find((item) => {
-    let isRowOverlap = false
-    let isColOverlap = false
-    if (item.startCol <= col && item.endCol >= col) {
-      isRowOverlap = true
-    }
-    if (item.startRow <= row && item.endRow >= row) {
-      isColOverlap = true
-    }
-
-    return isRowOverlap && isColOverlap
+export const deleteChart = (chartList, target) => {
+  const res = chartList.filter((item) => {
+    return item !== target
   })
 
-  return !!res
+  return res
+}
+
+/**
+ * 判断当前拖拽的图表是否和已有的图表重叠
+ *
+ * @param {*} chartList 图表list
+ * @param {*} targetChart 要判断是否重叠的图表
+ * @returns
+ */
+export const checkElementOverlap = (chartList, targetChart) => {
+  console.log('chartList', chartList)
+  console.log('targetChart', targetChart)
+
+  let isOverlap = false
+  // 获取target四个点的坐标
+  const targetSCol = targetChart.startCol
+  const targetSRow = targetChart.startRow
+  const targetECol = targetChart.endCol
+  const targetERow = targetChart.endRow
+  const targetPositon = [targetSCol, targetSRow, targetECol, targetERow]
+
+  chartList.forEach((chartItem) => {
+    // 获取chartitem四个点的坐标
+    const itemSCol = chartItem.startCol
+    const itemSRow = chartItem.startRow
+    const itemECol = chartItem.endCol
+    const itemERow = chartItem.endRow
+    const itemPositon = [itemSCol, itemSRow, itemECol, itemERow]
+    // 判断target是否有point在item的内部
+    const isTargetPointInItem =
+      isPointInRect([targetSCol, targetSRow], itemPositon) ||
+      isPointInRect([targetSCol, targetERow], itemPositon) ||
+      isPointInRect([targetECol, targetSRow], itemPositon) ||
+      isPointInRect([targetECol, targetERow], itemPositon)
+    // 判断item是否有point在target的内部
+    const isItemPointInTarget =
+      isPointInRect([itemSCol, itemSRow], targetPositon) ||
+      isPointInRect([itemSCol, itemERow], targetPositon) ||
+      isPointInRect([itemECol, itemSRow], targetPositon) ||
+      isPointInRect([itemECol, itemERow], targetPositon)
+
+    if (isTargetPointInItem || isItemPointInTarget) {
+      console.log('有重叠')
+      isOverlap = true
+    }
+  })
+
+  return isOverlap
+}
+
+/**
+ * 传入dashboard的ref, 和当前鼠标位置, 返回当前鼠标位置的col和row
+ */
+export const getColAndRow = (dashboardRef, [x, y]) => {
+  const { left, top } = dashboardRef.getBoundingClientRect()
+  const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft
+  const scrollTop = window.pageYOffset || document.documentElement.scrollTop
+
+  // dashboard的左上角坐标 + 滚动距离 = dashboard的实际位置
+  const distanceLeft = left + scrollLeft
+  const distanceTop = top + scrollTop
+
+  // 计算每个图表的宽高
+  const chartItemWidth = dashboardRef.offsetWidth / 4
+  const chartItemHeight = dashboardRef.offsetHeight / 3
+
+  // 计算当前鼠标位置的col和row
+  const col = Math.floor((x - distanceLeft) / chartItemWidth)
+  const row = Math.floor((y - distanceTop) / chartItemHeight)
+
+  return [col, row]
 }
 
 /**
@@ -144,73 +199,133 @@ export const resizeChart = (
   resizeChartItem,
   direction
 ) => {
-  const resChartList = [...chartList]
+  let resChartList = []
 
   // 拖动下按钮
   if (direction === DIRECTIONS.DOWN) {
     const addHeight = row - resizeChartItem.endRow
 
-    resChartList.forEach((item) => {
+    resChartList = chartList.map((item) => {
+      const cloneItem = { ...item }
       if (
-        item.startCol === resizeChartItem.startCol &&
-        item.startRow === resizeChartItem.startRow
+        cloneItem.startCol === resizeChartItem.startCol &&
+        cloneItem.startRow === resizeChartItem.startRow
       ) {
-        item.height += addHeight
-        item.endRow += addHeight
+        cloneItem.height += addHeight
+        cloneItem.endRow += addHeight
       }
-    })
 
-    return resChartList
+      // 计算修改完大小的图表, 是否和其他图表重叠
+      const chartListWithoutSelf = deleteChart(chartList, item)
+
+      const isOverlap = checkElementOverlap(chartListWithoutSelf, cloneItem)
+      // 如果有重叠, 则不修改大小
+      if (isOverlap) {
+        console.log('有重叠, 拖拽失败')
+        return item
+      }
+
+      return cloneItem
+    })
   }
 
   // 拖动右按钮
   if (direction === DIRECTIONS.RIGHT) {
     const addWidth = col - resizeChartItem.endCol
 
-    resChartList.forEach((item) => {
+    resChartList = chartList.map((item) => {
+      const cloneItem = { ...item }
       if (
-        item.startCol === resizeChartItem.startCol &&
-        item.startRow === resizeChartItem.startRow
+        cloneItem.startCol === resizeChartItem.startCol &&
+        cloneItem.startRow === resizeChartItem.startRow
       ) {
-        item.width += addWidth
-        item.endCol += addWidth
+        cloneItem.width += addWidth
+        cloneItem.endCol += addWidth
       }
-    })
 
-    return resChartList
+      // 计算修改完大小的图表, 是否和其他图表重叠
+      const chartListWithoutSelf = deleteChart(chartList, item)
+
+      const isOverlap = checkElementOverlap(chartListWithoutSelf, cloneItem)
+      // 如果有重叠, 则不修改大小
+      if (isOverlap) {
+        console.log('有重叠, 拖拽失败')
+        return item
+      }
+
+      return cloneItem
+    })
   }
 
   // 拖动上按钮
   if (direction === DIRECTIONS.UP) {
     const addHeight = resizeChartItem.startRow - row
 
-    resChartList.forEach((item) => {
+    resChartList = chartList.map((item) => {
+      const cloneItem = { ...item }
       if (
-        item.startCol === resizeChartItem.startCol &&
-        item.startRow === resizeChartItem.startRow
+        cloneItem.startCol === resizeChartItem.startCol &&
+        cloneItem.startRow === resizeChartItem.startRow
       ) {
-        item.height += addHeight
-        item.startRow -= addHeight
+        cloneItem.height += addHeight
+        cloneItem.startRow -= addHeight
       }
-    })
 
-    return resChartList
+      // 计算修改完大小的图表, 是否和其他图表重叠
+      const chartListWithoutSelf = deleteChart(chartList, item)
+
+      const isOverlap = checkElementOverlap(chartListWithoutSelf, cloneItem)
+      // 如果有重叠, 则不修改大小
+      if (isOverlap) {
+        console.log('有重叠, 拖拽失败')
+        return item
+      }
+
+      return cloneItem
+    })
   }
 
   // 拖动左按钮
   if (direction === DIRECTIONS.LEFT) {
     const addWidth = resizeChartItem.startCol - col
 
-    resChartList.forEach((item) => {
+    resChartList = chartList.map((item) => {
+      const cloneItem = { ...item }
       if (
-        item.startCol === resizeChartItem.startCol &&
-        item.startRow === resizeChartItem.startRow
+        cloneItem.startCol === resizeChartItem.startCol &&
+        cloneItem.startRow === resizeChartItem.startRow
       ) {
-        item.width += addWidth
-        item.startCol -= addWidth
+        cloneItem.width += addWidth
+        cloneItem.startCol -= addWidth
       }
-    })
 
-    return resChartList
+      // 计算修改完大小的图表, 是否和其他图表重叠
+      const chartListWithoutSelf = deleteChart(chartList, item)
+
+      const isOverlap = checkElementOverlap(chartListWithoutSelf, cloneItem)
+      // 如果有重叠, 则不修改大小
+      if (isOverlap) {
+        console.log('有重叠, 拖拽失败')
+        return item
+      }
+
+      return cloneItem
+    })
   }
+
+  return resChartList
+}
+
+/**
+ * 判断一个点是否在一个矩形内
+ */
+export const isPointInRect = (
+  [targetX, targetY],
+  [startX, startY, endX, endY]
+) => {
+  // 判断点是否在矩形内
+  const isXInRect = targetX >= startX && targetX <= endX
+  const isYInRect = targetY >= startY && targetY <= endY
+
+  return isXInRect && isYInRect
 }

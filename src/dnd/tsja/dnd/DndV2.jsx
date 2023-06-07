@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import style from './DndV2.module.scss'
 import { chartDataList } from './chartDataList'
 import { DIRECTIONS } from './constant'
@@ -7,6 +7,7 @@ import {
   deleteChartAtPosition,
   getChartAtPosition,
   getChartAtStartPoint,
+  getColAndRow,
   resizeChart,
   updateChartAtPosition,
 } from './utils/checkElementOverlap'
@@ -14,35 +15,7 @@ import useDimensions from '../../../hock/useDimensions'
 
 const DndV2 = () => {
   // 渲染的数据列表
-  const [chartList, setChartList] = useState([
-    // {
-    //   chart: chartDataList[0],
-    //   width: 2,
-    //   height: 2,
-    //   startCol: 2,
-    //   startRow: 1,
-    //   endCol: 3,
-    //   endRow: 2,
-    // },
-    // {
-    //   chart: chartDataList[1],
-    //   width: 1,
-    //   height: 1,
-    //   startCol: 1,
-    //   startRow: 1,
-    //   endCol: 1,
-    //   endRow: 1,
-    // },
-    // {
-    //   chart: chartDataList[2],
-    //   width: 1,
-    //   height: 1,
-    //   startCol: 1,
-    //   startRow: 0,
-    //   endCol: 1,
-    //   endRow: 0,
-    // },
-  ])
+  const [chartList, setChartList] = useState([])
   // 整个图表的ref
   const dashboardRef = useRef(null)
   // 整个dashboard图表的宽高
@@ -70,7 +43,6 @@ const DndV2 = () => {
     dragItemPosition.current = [col, row]
     // 将正在拖动的元素设置到dragData中
     if (targetElement) {
-      // dragData.current = { ...targetElement.chart }
       dragData.current = { ...targetElement }
     }
   }
@@ -106,15 +78,21 @@ const DndV2 = () => {
 
     // 如果是调整大小
     if (resizeDirection.current) {
-      // 如果要调整到的位置区间内没有元素, 则调整大小
-      if (!targetElement) {
-        newChartList = resizeChart(
-          newChartList,
-          dropIndex.current,
-          dragData.current,
-          resizeDirection.current
-        )
-      }
+      // 获取将要拖动到的位置
+      const dropLocation = getColAndRow(dashboardRef.current, [
+        event.clientX,
+        event.clientY,
+      ])
+
+      // 调整大小(已经在resizeChart中处理了越界的情况)
+      const resizedChartList = resizeChart(
+        newChartList,
+        dropLocation,
+        dragData.current,
+        resizeDirection.current
+      )
+
+      newChartList = resizedChartList
     } else {
       // 如果没有元素, 直接放置
       if (!targetElement) {
