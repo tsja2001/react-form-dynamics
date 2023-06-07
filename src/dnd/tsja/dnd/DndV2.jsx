@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 import style from './DndV2.module.scss'
 import { chartDataList } from './chartDataList'
-import { DIRECTIONS } from './constant'
+import { DASHBOARD_SIZE, DIRECTIONS } from './constant'
 import {
   DashboardChartItem,
   deleteChartAtPosition,
   getChartAtPosition,
   getChartAtStartPoint,
   getColAndRow,
+  isChartOutDashboard,
   resizeChart,
   updateChartAtPosition,
 } from './utils/checkElementOverlap'
@@ -93,19 +94,42 @@ const DndV2 = () => {
       )
 
       newChartList = resizedChartList
-    } else {
-      // 如果没有元素, 直接放置
-      if (!targetElement) {
-        dragData.current.startCol = dropIndex.current[0]
-        dragData.current.startRow = dropIndex.current[1]
-        dragData.current.endCol = dropIndex.current[0]
-        dragData.current.endRow = dropIndex.current[1]
+    } 
+    // 如果是拖动图表
+    else {
+      
 
-        newChartList.push(dragData.current)
+      // 如果要放置的位置没有元素, 直接放置
+      if (!targetElement) {
+        const cloneDragData = { ...dragData.current }
+
+        cloneDragData.startCol = dropIndex.current[0]
+        cloneDragData.startRow = dropIndex.current[1]
+        cloneDragData.endCol = dropIndex.current[0] + cloneDragData.width - 1
+        cloneDragData.endRow = dropIndex.current[1] + cloneDragData.height - 1
+
+        // 判断拖拽后的元素是否超越dashboard的边界
+        const isOutDashboard = isChartOutDashboard(
+          cloneDragData,
+          DASHBOARD_SIZE
+        )
+
+        if (isOutDashboard) {
+          console.log('放在此位置会超出边界')
+          newChartList.push(dragData.current)
+        } else {
+          newChartList.push(cloneDragData)
+        }
       }
 
-      // 如果有元素, 进行替换
+      // 如果要放置的位置有元素
       if (targetElement) {
+        // 如果要放置的位置的元素和拖动的元素不是同一个元素, 直接替换
+        // if (targetElement.id !== dragData.current.id) {
+
+        // }
+
+        console.log('targetElement === dragData.current', targetElement.id === dragData.current.id)
         newChartList = updateChartAtPosition(
           newChartList,
           dropIndex.current,

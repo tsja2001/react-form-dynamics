@@ -1,5 +1,12 @@
 import { DIRECTIONS } from '../constant'
 
+/**
+ * 生成随机ID
+ */
+export const generaId = () => {
+  return Math.random().toString(36).slice(2);
+}
+
 export class DashboardChartItem {
   constructor(chart) {
     this.chart = chart
@@ -9,6 +16,7 @@ export class DashboardChartItem {
     this.startRow = 0
     this.endCol = 0
     this.endRow = 0
+    this.id = generaId()
   }
 }
 
@@ -127,9 +135,6 @@ export const deleteChart = (chartList, target) => {
  * @returns
  */
 export const checkElementOverlap = (chartList, targetChart) => {
-  console.log('chartList', chartList)
-  console.log('targetChart', targetChart)
-
   let isOverlap = false
   // 获取target四个点的坐标
   const targetSCol = targetChart.startCol
@@ -211,8 +216,18 @@ export const resizeChart = (
         cloneItem.startCol === resizeChartItem.startCol &&
         cloneItem.startRow === resizeChartItem.startRow
       ) {
-        cloneItem.height += addHeight
-        cloneItem.endRow += addHeight
+        let newHeight = cloneItem.height + addHeight
+        let newEndRow = cloneItem.endRow + addHeight
+
+        // 如果新的高度小于1, 则设为1
+        if (newHeight < 1) {
+          console.log('高度小于1, 设为1')
+          newHeight = 1
+          newEndRow = cloneItem.startRow
+        }
+
+        cloneItem.height = newHeight
+        cloneItem.endRow = newEndRow
       }
 
       // 计算修改完大小的图表, 是否和其他图表重叠
@@ -239,8 +254,17 @@ export const resizeChart = (
         cloneItem.startCol === resizeChartItem.startCol &&
         cloneItem.startRow === resizeChartItem.startRow
       ) {
-        cloneItem.width += addWidth
-        cloneItem.endCol += addWidth
+        let newWidth = cloneItem.width + addWidth
+        let newEndCol = cloneItem.endCol + addWidth
+        // 如果新的宽度小于1, 则设为1
+        if (newWidth < 1) {
+          console.log('宽度小于1, 设为1')
+          newWidth = 1
+          newEndCol = cloneItem.startCol
+        }
+
+        cloneItem.width = newWidth
+        cloneItem.endCol = newEndCol
       }
 
       // 计算修改完大小的图表, 是否和其他图表重叠
@@ -267,8 +291,17 @@ export const resizeChart = (
         cloneItem.startCol === resizeChartItem.startCol &&
         cloneItem.startRow === resizeChartItem.startRow
       ) {
-        cloneItem.height += addHeight
-        cloneItem.startRow -= addHeight
+        let newHeight = cloneItem.height + addHeight
+        let newStartRow = cloneItem.startRow - addHeight
+        // 如果新的高度小于1, 则设为1
+        if (newHeight < 1) {
+          console.log('高度小于1, 设为1')
+          newHeight = 1
+          newStartRow = cloneItem.endRow
+        }
+
+        cloneItem.height = newHeight
+        cloneItem.startRow = newStartRow
       }
 
       // 计算修改完大小的图表, 是否和其他图表重叠
@@ -295,8 +328,17 @@ export const resizeChart = (
         cloneItem.startCol === resizeChartItem.startCol &&
         cloneItem.startRow === resizeChartItem.startRow
       ) {
-        cloneItem.width += addWidth
-        cloneItem.startCol -= addWidth
+        let newWidth = cloneItem.width + addWidth
+        let newStartCol = cloneItem.startCol - addWidth
+        // 如果新的宽度小于1, 则设为1
+        if (newWidth < 1) {
+          console.log('宽度小于1, 设为1')
+          newWidth = 1
+          newStartCol = cloneItem.endCol
+        }
+
+        cloneItem.width = newWidth
+        cloneItem.startCol = newStartCol
       }
 
       // 计算修改完大小的图表, 是否和其他图表重叠
@@ -328,4 +370,19 @@ export const isPointInRect = (
   const isYInRect = targetY >= startY && targetY <= endY
 
   return isXInRect && isYInRect
+}
+
+/**
+ * 判断图表是否超越dashboard的边界
+ */
+export const isChartOutDashboard = (chartItem, dashboardsize = [4, 3]) => {
+  const [col, row] = dashboardsize
+
+  const { startCol, startRow, endCol, endRow } = chartItem
+
+  if (startCol < 0 || startRow < 0 || endCol >= col || endRow >= row) {
+    return true
+  }
+
+  return false
 }

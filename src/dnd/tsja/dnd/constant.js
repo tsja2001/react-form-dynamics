@@ -4,3 +4,5 @@ export const DIRECTIONS = {
   LEFT: 'left',
   RIGHT: 'right',
 }
+
+export const DASHBOARD_SIZE = [4, 3]
