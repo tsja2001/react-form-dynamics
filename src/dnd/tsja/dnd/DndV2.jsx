@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react'
 import style from './DndV2.module.scss'
 import { chartDataList } from './chartDataList'
-import { DASHBOARD_SIZE, DIRECTIONS } from './constant'
+import { DASHBOARD_SIZE } from './constant'
 import {
   DashboardChartItem,
   checkElementOverlap,
@@ -88,60 +88,13 @@ const DndV2 = () => {
 
     // 如果是调整大小
     if (resizeDirection.current) {
-      // 获取将要拖动到的位置
-      const dropLocation = getColAndRow(
-        dashboardRef.current,
-        [event.clientX, event.clientY],
-        DASHBOARD_SIZE
-      )
-
-      // 调整大小(已经在resizeChart中处理了越界的情况)
-      const resizedChartList = resizeChart(
-        newChartList,
-        dropLocation,
-        dragData.current,
-        resizeDirection.current
-      )
-
-      newChartList = resizedChartList
+      newChartList = resizeChartOnDragOver(event, newChartList)
     }
     // 如果是拖动图表
     else {
       // 如果要放置的位置没有元素, 判断拖拽后的元素放之后是否会和其他元素重叠(比如拖动一个宽度为2的元素, 放置在一个宽度为1的元素后面)
       if (!targetElement) {
-        const cloneDragData = { ...dragData.current }
-
-        cloneDragData.startCol = dropPosition.current[0]
-        cloneDragData.startRow = dropPosition.current[1]
-        cloneDragData.endCol = dropPosition.current[0] + cloneDragData.width - 1
-        cloneDragData.endRow =
-          dropPosition.current[1] + cloneDragData.height - 1
-
-        // 判断拖拽后的元素是否超越dashboard的边界
-        const isOutDashboard = isChartOutDashboard(
-          cloneDragData,
-          DASHBOARD_SIZE
-        )
-
-        // 如果当前拖拽的元素长或者宽大于1, 则需要判断拖拽后的元素是否会和其他元素重叠
-        const chartListWithoutDragItem = chartList.filter((item) => {
-          return item.id !== dragData.current.id
-        })
-
-        const isOverlap = checkElementOverlap(
-          chartListWithoutDragItem,
-          cloneDragData
-        )
-
-        if (isOutDashboard) {
-          console.log('放在此位置会超出边界')
-          newChartList.push(dragData.current)
-        } else if (isOverlap) {
-          console.log('放在此位置会重叠')
-          newChartList.push(dragData.current)
-        } else {
-          newChartList.push(cloneDragData)
-        }
+        newChartList = dragChartOnDragOver(newChartList)
       }
 
       // 如果要放置的位置有元素
@@ -157,29 +110,7 @@ const DndV2 = () => {
         // 如果要放置的位置的元素和拖动的元素是同一个元素, 此时可能是调整一个元素的位置. 这个元素的宽或者高必须大于1
         else {
           if (dragData.current.width > 1 || dragData.current.height > 1) {
-            const cloneDragData = { ...dragData.current }
-
-            const dropLocation = getColAndRow(
-              dashboardRef.current,
-              [event.clientX, event.clientY],
-              DASHBOARD_SIZE
-            )
-            cloneDragData.startCol = dropLocation[0]
-            cloneDragData.startRow = dropLocation[1]
-            cloneDragData.endCol = dropLocation[0] + cloneDragData.width - 1
-            cloneDragData.endRow = dropLocation[1] + cloneDragData.height - 1
-
-            // 判断拖拽后的元素是否超越dashboard的边界
-            const isOutDashboard = isChartOutDashboard(
-              cloneDragData,
-              DASHBOARD_SIZE
-            )
-            if (isOutDashboard) {
-              console.log('放在此位置会超出边界')
-            } else {
-              newChartList = deleteChartById(newChartList, dragData.current.id)
-              newChartList.push(cloneDragData)
-            }
+            newChartList = dragChartSelfOnDragOver(newChartList)
           }
         }
       }
@@ -205,6 +136,92 @@ const DndV2 = () => {
     dropPosition.current = null
     dragItemPosition.current = null
     resizeDirection.current = null
+  }
+
+  // 拖动调整大小
+  const resizeChartOnDragOver = (domEvent, chartListProp) => {
+    // 获取将要拖动到的位置
+    const dropLocation = getColAndRow(
+      dashboardRef.current,
+      [domEvent.clientX, domEvent.clientY],
+      DASHBOARD_SIZE
+    )
+
+    // 调整大小(已经在resizeChart中处理了越界的情况)
+    const resizedChartList = resizeChart(
+      chartListProp,
+      dropLocation,
+      dragData.current,
+      resizeDirection.current
+    )
+
+    return resizedChartList
+  }
+
+  // 放置元素
+  const dragChartOnDragOver = (chartListProp) => {
+    const cloneDragData = { ...dragData.current }
+    const cloneChartListProp = [...chartListProp]
+
+    cloneDragData.startCol = dropPosition.current[0]
+    cloneDragData.startRow = dropPosition.current[1]
+    cloneDragData.endCol = dropPosition.current[0] + cloneDragData.width - 1
+    cloneDragData.endRow = dropPosition.current[1] + cloneDragData.height - 1
+
+    // 判断拖拽后的元素是否超越dashboard的边界
+    const isOutDashboard = isChartOutDashboard(cloneDragData, DASHBOARD_SIZE)
+
+    // 如果当前拖拽的元素长或者宽大于1, 则需要判断拖拽后的元素是否会和其他元素重叠
+    const chartListWithoutDragItem = chartList.filter((item) => {
+      return item.id !== dragData.current.id
+    })
+
+    const isOverlap = checkElementOverlap(
+      chartListWithoutDragItem,
+      cloneDragData
+    )
+
+    if (isOutDashboard) {
+      console.log('放在此位置会超出边界')
+      cloneChartListProp.push(dragData.current)
+    } else if (isOverlap) {
+      console.log('放在此位置会重叠')
+      cloneChartListProp.push(dragData.current)
+    } else {
+      cloneChartListProp.push(cloneDragData)
+    }
+
+    return cloneChartListProp
+  }
+
+  // 放置一个长或者宽大于1的元素, 比如拖动一个宽度为2的元素, 向右拖动了一个
+  const dragChartSelfOnDragOver = (chartListProp) => {
+    let cloneChartListProp = [...chartListProp]
+    const cloneDragData = { ...dragData.current }
+
+    const dropLocation = getColAndRow(
+      dashboardRef.current,
+      [event.clientX, event.clientY],
+      DASHBOARD_SIZE
+    )
+    cloneDragData.startCol = dropLocation[0]
+    cloneDragData.startRow = dropLocation[1]
+    cloneDragData.endCol = dropLocation[0] + cloneDragData.width - 1
+    cloneDragData.endRow = dropLocation[1] + cloneDragData.height - 1
+
+    // 判断拖拽后的元素是否超越dashboard的边界
+    const isOutDashboard = isChartOutDashboard(cloneDragData, DASHBOARD_SIZE)
+    if (isOutDashboard) {
+      console.log('放在此位置会超出边界')
+    } else {
+      cloneChartListProp = deleteChartById(
+        cloneChartListProp,
+        dragData.current.id
+      )
+      cloneChartListProp.push(cloneDragData)
+    }
+
+    return cloneChartListProp
   }
 
   return (
