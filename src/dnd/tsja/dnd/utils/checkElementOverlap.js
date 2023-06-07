@@ -13,7 +13,7 @@ export class DashboardChartItem {
 }
 
 /**
- * 获取以指定位置为起点的图表 (如果当前位置有图表, 但不是图表的起始点, 则返回null)
+ * 获取以指定位置为起点的图表 (如果当前位置有图表, 但不是图表的起始点, 也不返回)
  */
 export const getChartAtStartPoint = (chartList, [col, row]) => {
   return chartList.find((item) => {
@@ -144,11 +144,9 @@ export const resizeChart = (
   resizeChartItem,
   direction
 ) => {
-  // console.log('resizeChart', chartList, [col, row], resizeChartItem, direction)
-
   const resChartList = [...chartList]
 
-  // 向下调整
+  // 拖动下按钮
   if (direction === DIRECTIONS.DOWN) {
     const addHeight = row - resizeChartItem.endRow
 
@@ -165,6 +163,7 @@ export const resizeChart = (
     return resChartList
   }
 
+  // 拖动右按钮
   if (direction === DIRECTIONS.RIGHT) {
     const addWidth = col - resizeChartItem.endCol
 
@@ -181,6 +180,7 @@ export const resizeChart = (
     return resChartList
   }
 
+  // 拖动上按钮
   if (direction === DIRECTIONS.UP) {
     const addHeight = resizeChartItem.startRow - row
 
@@ -197,6 +197,7 @@ export const resizeChart = (
     return resChartList
   }
 
+  // 拖动左按钮
   if (direction === DIRECTIONS.LEFT) {
     const addWidth = resizeChartItem.startCol - col
 

@@ -9,7 +9,6 @@ import {
   getChartAtStartPoint,
   resizeChart,
   updateChartAtPosition,
-  updateChartAtPositionAllData,
 } from './utils/checkElementOverlap'
 import useDimensions from '../../../hock/useDimensions'
 
@@ -46,7 +45,7 @@ const DndV2 = () => {
   ])
   // 整个图表的ref
   const dashboardRef = useRef(null)
-  // 整个图表的宽高
+  // 整个dashboard图表的宽高
   const dashboardSize = useDimensions(dashboardRef)
   // 当前拖拽数据
   const dragData = useRef(null)
@@ -174,6 +173,7 @@ const DndV2 = () => {
           </div>
         ))}
       </div>
+      <button>撤回</button>
       <div>width: {dashboardSize.width}</div>
       <div>height: {dashboardSize.height}</div>
       <div className={style.dashboardWrap} ref={dashboardRef}>
