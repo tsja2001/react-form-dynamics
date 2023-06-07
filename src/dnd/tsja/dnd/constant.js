@@ -5,4 +5,5 @@ export const DIRECTIONS = {
   RIGHT: 'right',
 }
 
-export const DASHBOARD_SIZE = [4, 3]
+// 行数, 列数
+export const DASHBOARD_SIZE = [5, 3]

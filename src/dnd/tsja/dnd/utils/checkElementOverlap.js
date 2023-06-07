@@ -121,8 +121,6 @@ export const deleteChartAtPosition = (chartList, [col, row]) => {
  */
 export const deleteChart = (chartList, target) => {
   const res = chartList.filter((item) => {
-    console.log(item, target)
-    console.log(item === target)
     return item !== target
   })
 
@@ -196,7 +194,12 @@ export const checkElementOverlap = (chartList, targetChart) => {
 /**
  * 传入dashboard的ref, 和当前鼠标位置, 返回当前鼠标位置的col和row
  */
-export const getColAndRow = (dashboardRef, [x, y]) => {
+export const getColAndRow = (dashboardRef, [x, y], dashboardsize) => {
+  if(!dashboardsize || dashboardsize.length !== 2) {
+    throw new Error('dashboardsize必须是一个长度为2的数组')
+  }
+
+
   const { left, top } = dashboardRef.getBoundingClientRect()
   const scrollLeft = window.pageXOffset || document.documentElement.scrollLeft
   const scrollTop = window.pageYOffset || document.documentElement.scrollTop
@@ -206,8 +209,8 @@ export const getColAndRow = (dashboardRef, [x, y]) => {
   const distanceTop = top + scrollTop
 
   // 计算每个图表的宽高
-  const chartItemWidth = dashboardRef.offsetWidth / 4
-  const chartItemHeight = dashboardRef.offsetHeight / 3
+  const chartItemWidth = dashboardRef.offsetWidth / dashboardsize[0]
+  const chartItemHeight = dashboardRef.offsetHeight / dashboardsize[1]
 
   // 计算当前鼠标位置的col和row
   const col = Math.floor((x - distanceLeft) / chartItemWidth)
@@ -396,7 +399,11 @@ export const isPointInRect = (
 /**
  * 判断图表是否超越dashboard的边界
  */
-export const isChartOutDashboard = (chartItem, dashboardsize = [4, 3]) => {
+export const isChartOutDashboard = (chartItem, dashboardsize) => {
+  if(!dashboardsize || dashboardsize.length !== 2) {
+    throw new Error('dashboardsize必须是一个长度为2的数组')
+  }
+
   const [col, row] = dashboardsize
 
   const { startCol, startRow, endCol, endRow } = chartItem
