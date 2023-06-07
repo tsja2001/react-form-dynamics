@@ -15,6 +15,7 @@ import {
   updateChartAtPosition,
 } from './utils/checkElementOverlap'
 import useDimensions from '../../../hock/useDimensions'
+import { DragBar } from './component/dragBar/DragBar'
 
 const DndV2 = () => {
   // 渲染的数据列表
@@ -272,58 +273,15 @@ const DndV2 = () => {
                             ])
                           }
                         >
-                          <div
-                            onDragStart={(event) =>
+                          <DragBar
+                            onDragStart={(domEvent, direction) => {
                               dragResizeStartFromDragBar(
-                                event,
+                                domEvent,
                                 [colIndex, rowIndex],
-                                DIRECTIONS.UP
+                                direction
                               )
-                            }
-                            draggable={true}
-                            className={`${style.dragBar} ${style.dragBarTop}`}
-                          >
-                            ⬆️
-                          </div>
-                          <div
-                            onDragStart={(event) =>
-                              dragResizeStartFromDragBar(
-                                event,
-                                [colIndex, rowIndex],
-                                DIRECTIONS.RIGHT
-                              )
-                            }
-                            draggable={true}
-                            className={`${style.dragBar} ${style.dragBarRight}`}
-                          >
-                            ➡️
-                          </div>
-                          <div
-                            onDragStart={(event) =>
-                              dragResizeStartFromDragBar(
-                                event,
-                                [colIndex, rowIndex],
-                                DIRECTIONS.DOWN
-                              )
-                            }
-                            draggable={true}
-                            className={`${style.dragBar} ${style.dragBarBotton}`}
-                          >
-                            ⬇️
-                          </div>
-                          <div
-                            onDragStart={(event) =>
-                              dragResizeStartFromDragBar(
-                                event,
-                                [colIndex, rowIndex],
-                                DIRECTIONS.LEFT
-                              )
-                            }
-                            draggable={true}
-                            className={`${style.dragBar} ${style.dragBarLeft}`}
-                          >
-                            ⬅️
-                          </div>
+                            }}
+                          />
                           {chartItem.chart.chart}
                         </div>
                       )
