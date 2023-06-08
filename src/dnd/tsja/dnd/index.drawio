@@ -1,9 +1,212 @@
 <mxfile host="65bd71144e">
     <diagram id="EeSAo4yaw5Sp_afLqSVQ" name="第 1 页">
-        <mxGraphModel dx="694" dy="442" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="2631" dy="1149" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
+                <mxCell id="36" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="-180" y="800" width="1090" height="660" as="geometry"/>
+                </mxCell>
+                <mxCell id="90" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="-148" y="870" width="590" height="300" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="拖动的几种情况" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="70" y="230" width="600" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="从List预览列表中,&lt;br&gt;拖动元素到dashboard中" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="70" y="330" width="140" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="拖动调整dashboard&lt;br&gt;中元素的位置" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="290" y="330" width="140" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="&lt;div&gt;拖动bar调整dashboard&lt;/div&gt;&lt;div&gt;中元素的大小&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="530" y="330" width="140" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="-40" y="415" width="850" height="255" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="鼠标按下元素,&lt;br&gt;开始拖动&lt;br&gt;onDragStart" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="-40" y="415" width="100" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="17" value="初始化dragData数据&lt;br&gt;并存储" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="70" y="460" width="140" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="18" style="edgeStyle=none;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="6" target="17" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" value="获取拖拽的图表数据,&lt;br&gt;=&amp;gt; dragData" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="290" y="460" width="140" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="21" style="edgeStyle=none;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="7" target="20" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="22" value="记录鼠标按下的网格位置,&lt;br&gt;=&amp;gt; dragStartPoint" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="290" y="520" width="140" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="24" value="记录要调整的方向&lt;br&gt;=&amp;gt; resizeDirection" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="530" y="520" width="140" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="26" style="edgeStyle=none;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="8" target="29" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="29" value="获取拖拽的图表数据,&lt;br&gt;=&amp;gt; dragData" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="530" y="460" width="140" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="30" value="记录拖动元素的初始位置&lt;br&gt;=&amp;gt; dragItemPosition" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="290" y="580" width="140" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="31" value="记录拖动元素的初始位置&lt;br&gt;=&amp;gt; dragItemPosition" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="530" y="580" width="140" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="32" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="-40" y="684" width="850" height="96" as="geometry"/>
+                </mxCell>
+                <mxCell id="33" value="鼠标拖拽着元素,&lt;br&gt;路过网格gridItem&lt;br&gt;onDragOver" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="-40" y="684" width="110" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="35" value="时时记录当前鼠标&lt;br&gt;所在的位置&lt;br&gt;=&amp;gt;&amp;nbsp;dropPosition" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="70" y="700" width="590" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="37" value="鼠标拖拽着元素,&lt;br&gt;路过网格gridItem&lt;br&gt;onDrop" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
+                    <mxGeometry x="-180" y="800" width="110" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="39" style="edgeStyle=none;html=1;entryX=0.119;entryY=0.003;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="17" target="35" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="138.15999999999985" y="816.5200000000002" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="41" style="edgeStyle=none;html=1;" parent="1" source="30" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="360" y="700" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="42" style="edgeStyle=none;html=1;entryX=0.901;entryY=0.029;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="31" target="35" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="640" y="818.5000000000002" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="45" value="判定要放置的位置上,&lt;br&gt;是否已经有元素" style="rhombus;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="-125" y="880" width="150" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="52" value="" style="endArrow=classic;html=1;fontFamily=Helvetica;fontSize=11;fontColor=default;align=center;strokeColor=default;" parent="1" source="45" target="64" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="5" y="920" as="sourcePoint"/>
+                        <mxPoint x="65" y="920" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="53" value="有元素" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="52" vertex="1" connectable="0">
+                    <mxGeometry x="-0.2363" y="-3" relative="1" as="geometry">
+                        <mxPoint y="1" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="57" value="" style="endArrow=classic;html=1;" parent="1" source="45" target="58" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="-50" y="1010" as="sourcePoint"/>
+                        <mxPoint x="-50" y="1030.7106781186549" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="59" value="无元素" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="57" vertex="1" connectable="0">
+                    <mxGeometry x="-0.05" y="2" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="58" value="判定将拖拽元素放置&lt;br&gt;之后是否会冲突、越界" style="rhombus;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=12;fontColor=default;align=center;strokeColor=default;fillColor=default;" parent="1" vertex="1">
+                    <mxGeometry x="-130" y="998.8199999999999" width="160" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="64" value="判定此位置的元素&lt;br&gt;是否和拖拽元素相同" style="rhombus;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="75" y="880" width="150" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="65" value="&lt;div&gt;直接替换&lt;/div&gt;&lt;div&gt;只替换chart数据,&lt;/div&gt;&lt;div&gt;保留宽高与定位信息&lt;/div&gt;&lt;div&gt;=&amp;gt; 更新chartList元素&lt;br&gt;&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=12;fontColor=default;align=center;strokeColor=default;fillColor=default;" parent="1" vertex="1">
+                    <mxGeometry x="265" y="880" width="140" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="66" value="不同" style="edgeStyle=none;html=1;" parent="1" source="64" target="65" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="67" value="比如一个2*1的元素, 向右拖动一个位置, 拖拽的元素和放置位置的元素相同. 此时也要移动&lt;br&gt;=&amp;gt; 更新chartList元素" style="rounded=0;whiteSpace=wrap;html=1;fontFamily=Helvetica;fontSize=12;fontColor=default;align=center;strokeColor=default;fillColor=default;" parent="1" vertex="1">
+                    <mxGeometry x="75" y="998.8199999999999" width="150" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="68" value="" style="edgeStyle=none;html=1;" parent="1" source="64" target="67" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="69" value="相同" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="68" vertex="1" connectable="0">
+                    <mxGeometry x="-0.3" y="-2" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="73" value="放置元素&lt;br&gt;=&amp;gt; 为chartList增加此数据" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="-122.5" y="1100" width="145" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="74" value="" style="endArrow=classic;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="58" target="73" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="-50" y="1128.82" as="sourcePoint"/>
+                        <mxPoint x="-50" y="1149.5306781186548" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="91" value="" style="endArrow=classic;html=1;entryX=0.486;entryY=0.005;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" target="90" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="139" y="760" as="sourcePoint"/>
+                        <mxPoint x="360" y="950.7106781186548" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="92" value="" style="endArrow=classic;html=1;entryX=0.866;entryY=-0.004;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="35" target="90" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="360" y="930" as="sourcePoint"/>
+                        <mxPoint x="360" y="950.7106781186548" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="94" value="" style="endArrow=classic;html=1;exitX=0.866;exitY=0.995;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="90" target="95" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="360" y="1180" as="sourcePoint"/>
+                        <mxPoint x="80" y="1251" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="95" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="220" y="1190" width="280" height="220" as="geometry"/>
+                </mxCell>
+                <mxCell id="97" value="判断&lt;br style=&quot;border-color: var(--border-color);&quot;&gt;拖动元素的初始位置(dragItemPosition)&lt;br style=&quot;border-color: var(--border-color);&quot;&gt;和&amp;nbsp;鼠标拖动到的位置(dropPosition)&lt;br style=&quot;border-color: var(--border-color);&quot;&gt;是否相同" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="240" y="1205" width="240" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="98" value="删除&lt;br&gt;元素的初始位置的元素(dragItemPosition)" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="270" y="1335" width="180" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="99" value="" style="edgeStyle=none;html=1;" edge="1" parent="1" source="97" target="98">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="100" value="不同" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="99">
+                    <mxGeometry x="-0.6929" y="4" relative="1" as="geometry">
+                        <mxPoint x="-4" y="4" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="101" value="" style="endArrow=classic;html=1;" edge="1" parent="1" source="90" target="104">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="145" y="1190" as="sourcePoint"/>
+                        <mxPoint x="145" y="1210.7106781186549" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="104" value="完成从list拖入dashboard逻辑" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="70" y="1480" width="166" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="105" value="完成拖动调整位置逻辑" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="281" y="1480" width="175" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="106" value="" style="edgeStyle=none;html=1;" edge="1" parent="1" source="95" target="105">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="109" value="根据释放元素时的鼠标&lt;b&gt;像素&lt;/b&gt;位置,&amp;nbsp;&lt;br&gt;计算要拖动到的位置, &lt;br&gt;判断越界与冲突&lt;br&gt;=&amp;gt;&amp;nbsp;更新chartList元素" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="466" y="870" width="270" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="110" value="" style="endArrow=classic;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.9;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="35" target="109">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="640" y="860" as="sourcePoint"/>
+                        <mxPoint x="660" y="830" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="114" value="完成大小修改" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="516" y="1480" width="180" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="115" value="" style="edgeStyle=none;html=1;" edge="1" parent="1" source="109" target="114">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
             </root>
         </mxGraphModel>
     </diagram>
