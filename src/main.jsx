@@ -13,6 +13,7 @@ import DndByGPT from './dnd/DndByGPT.jsx'
 import DndByGptResize from './dnd/DndByGptResize.jsx'
 import GridLayout from './dnd/react-grid-layout/GridLayout.jsx'
 import DndV2 from './dnd/tsja/dnd/DndV2.jsx'
+import DndV3 from './dnd/tsja/dndv3/DndV3.jsx'
 // import '../dist/output.css'
 
 // import Grid2 from './dnd/grid2/Grid2.jsx'
@@ -66,6 +67,14 @@ const router = createBrowserRouter([
     element: (
       <>
         <DndV2></DndV2>
+      </>
+    ),
+  },
+  {
+    path: '/dndV3',
+    element: (
+      <>
+        <DndV3></DndV3>
       </>
     ),
   },
