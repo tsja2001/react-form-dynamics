@@ -1,9 +1,9 @@
 import { useState } from "react";
 
-const useForseUpdate = () => {
+const useForceUpdate = () => {
 	// eslint-disable-next-line no-unused-vars
 	const [value, setValue] = useState(0);
 	return () => setValue(value => ++value);
 }
 
-export default useForseUpdate
+export default useForceUpdate

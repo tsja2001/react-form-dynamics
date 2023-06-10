@@ -2,7 +2,7 @@
 import { useRef, useState } from 'react'
 import style from './DndV3.module.scss'
 import { chartDataList } from './chartDataList'
-import { DASHBOARD_SIZE } from './constant'
+import { DASHBOARD_SIZE, DRAG_TYPE } from './constant'
 import {
   DashboardChartItem,
   checkElementOverlap,
@@ -17,17 +17,34 @@ import {
 } from './utils/checkElementOverlap'
 import useDimensions from '../../../hock/useDimensions'
 import { DragBar } from './component/dragBar/DragBar'
-import { ChartListItem } from './chartList'
+import { ChartList, ChartListItem } from './chartList'
+import useForceUpdate from '../../../hock/useForceUpdate'
 
 const DndV2 = () => {
   // 渲染的数据列表
-  const [chartList, setChartList] = useState([])
+  const chartlist = useRef(new ChartList(5, 3))
   // 整个图表的ref
   const dashboardRef = useRef(null)
   // 整个dashboard图表的宽高
   const dashboardSize = useDimensions(dashboardRef)
   // 当前拖拽数据
-  const dragData = useRef(null)
+  const dragData = useRef({
+    // 是否已经松开鼠标放下图表
+    isDroped: false,
+    // 一个网格内的图表数据, 也就是chartList的item
+    chartData: null,
+    // 开始拖拽时, 鼠标的位置[col, row]
+    dragStartPosition: null,
+    // 结束拖拽时的鼠标位置[col, row]
+    drapEndPosition: null,
+    // 当前正在拖动的数据来源, 有以下三种类型
+    // fromList 从预览列表中拉取
+    // fromDashboard 拖动dashboard内图表以调整位置
+    // resize 拖动bar来调整大小
+    type: null,
+    // 拖拽的方向 up | left | down | right
+    direction: null,
+  })
   // 鼠标从dashboard中开始拖拽时, 鼠标所在的位置(用于拖动长或者宽大大于1的元素时, 记录鼠标位置)
   const dragStartPoint = useRef(null)
   // 当前鼠标拖动的元素, 要放置的目标索引
@@ -37,13 +54,12 @@ const DndV2 = () => {
   // 记录要调整元素大小的调整方向
   const resizeDirection = useRef(null)
 
-  // 测试
-  const chartItem = useRef(new ChartListItem('aaa', 12))
-
-
+  const forseUpdate = useForceUpdate()
 
   // 从list中选择图表拖动
-  const dragChartStartFromList = (event, data) => {}
+  const dragChartStartFromList = (event, data) => {
+    dragData.current = { chartData: data, type: DRAG_TYPE.FROM_LIST }
+  }
 
   // 从dashboard的item拖动以调整位置
   const dragChartStartFromDashboard = (event, [col, row]) => {}
@@ -52,10 +68,47 @@ const DndV2 = () => {
   const dragResizeStartFromDragBar = (event, [col, row], position) => {}
 
   // 鼠标拖动路过元素
-  const dragOver = (event, index) => {}
+  const dragOver = (event, index) => {
+    event.preventDefault()
+    event.stopPropagation()
+
+    // 获取鼠标当前位置[col, row]
+    const mousePosintion = chartlist.current.getMousePosition(
+      dashboardRef.current,
+      [event.clientX, event.clientY]
+    )
+    dragData.current.drapEndPosition = mousePosintion
+  }
 
   // 鼠标松开, 结束拖动
-  const chartChartDrop = (event) => {}
+  const chartChartDrop = (event) => {
+    event.preventDefault()
+    event.stopPropagation()
+
+    const { type } = dragData.current
+    dragData.current.isDroped = true
+
+    switch (type) {
+      case DRAG_TYPE.FROM_LIST:
+        // 从列表中拖动
+        dragChartDropFromList(event)
+    }
+
+    dragData.current = null
+    forseUpdate()
+  }
+
+  // 从列表中拖动图表到dashboard, 放下鼠标时的逻辑
+  const dragChartDropFromList = () => {
+    // todo修改为更新图表逻辑
+    const chartItem = new ChartListItem({
+      chart: dragData.current.chartData,
+      startCol: dragData.current.drapEndPosition[0],
+      startRow: dragData.current.drapEndPosition[1],
+    })
+
+    chartlist.current.addChart(chartItem)
+  }
 
   return (
     <div className={style.content}>
@@ -94,47 +147,52 @@ const DndV2 = () => {
                   onDragOver={(event) => dragOver(event, [colIndex, rowIndex])}
                   className={style.gridItem}
                   key={`${rowIndex}-${colIndex}`}
+                  onClick={() => {
+                    console.log('dragData.current', dragData.current)
+                    console.log('chartlist.current', chartlist.current)
+                  }}
                 >
                   {(() => {
-                    // const chartItem = getChartAtStartPoint(chartList, [
-                    //   colIndex,
-                    //   rowIndex,
-                    // ])
-                    // // 如果当前位置有元素, 显示元素
-                    // if (chartItem) {
-                    //   return (
-                    //     <div
-                    //       className={style.chartItem}
-                    //       draggable={true}
-                    //       style={{
-                    //         width:
-                    //           (dashboardSize.width / DASHBOARD_SIZE[0]) *
-                    //             chartItem.width ?? 'auto',
-                    //         height:
-                    //           (dashboardSize.height / DASHBOARD_SIZE[1]) *
-                    //             chartItem.height ?? 'auto',
-                    //       }}
-                    //       // 拖拽item调整位置
-                    //       onDragStart={(event) =>
-                    //         dragChartStartFromDashboard(event, [
-                    //           colIndex,
-                    //           rowIndex,
-                    //         ])
-                    //       }
-                    //     >
-                    //       <DragBar
-                    //         onDragStart={(domEvent, direction) => {
-                    //           dragResizeStartFromDragBar(
-                    //             domEvent,
-                    //             [colIndex, rowIndex],
-                    //             direction
-                    //           )
-                    //         }}
-                    //       />
-                    //       {chartItem.chart.chart}
-                    //     </div>
-                    //   )
-                    // }
+                    const chartItem = chartlist.current.findChartByPosition([
+                      colIndex,
+                      rowIndex,
+                    ])
+
+                    // 如果当前位置有元素, 显示元素
+                    if (chartItem) {
+                      return (
+                        <div
+                          className={style.chartItem}
+                          draggable={true}
+                          style={{
+                            width:
+                              (dashboardSize.width / DASHBOARD_SIZE[0]) *
+                                chartItem.width ?? 'auto',
+                            height:
+                              (dashboardSize.height / DASHBOARD_SIZE[1]) *
+                                chartItem.height ?? 'auto',
+                          }}
+                          // 拖拽item调整位置
+                          // onDragStart={(event) =>
+                          //   dragChartStartFromDashboard(event, [
+                          //     colIndex,
+                          //     rowIndex,
+                          //   ])
+                          // }
+                        >
+                          {/* <DragBar
+                            onDragStart={(domEvent, direction) => {
+                              dragResizeStartFromDragBar(
+                                domEvent,
+                                [colIndex, rowIndex],
+                                direction
+                              )
+                            }}
+                          /> */}
+                          {chartItem.chart.chart}
+                        </div>
+                      )
+                    }
                   })()}
                 </div>
               )
