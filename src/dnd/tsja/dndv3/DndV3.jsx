@@ -183,8 +183,22 @@ const DndV3 = () => {
           </div>
         ))}
       </div>
-      <button onClick={chartlist.current.undo}>撤回</button>
-      <button  onClick={chartlist.current.redo}> 重做</button>
+      <button
+        onClick={() => {
+          chartlist.current.undo()
+          forceUpdate()
+        }}
+      >
+        撤回
+      </button>
+      <button
+        onClick={() => {
+          chartlist.current.redo()
+          forceUpdate()
+        }}
+      >
+        重做
+      </button>
       <div>width: {dashboardSize.width}</div>
       <div>height: {dashboardSize.height}</div>
       <div

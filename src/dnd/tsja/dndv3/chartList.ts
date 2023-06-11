@@ -1,6 +1,5 @@
-import { PicLeftOutlined } from '@ant-design/icons'
 import { DIRECTIONS } from './constant'
-import { IChartItem, IDirection } from './type'
+import { IChartItem } from './type'
 import { cloneDeep } from 'lodash'
 
 export class ChartListItem implements IChartItem {
@@ -30,38 +29,29 @@ export class ChartListItem implements IChartItem {
 }
 
 class HistoryStack {
-  stack: ChartListItem[][] = []
-  _currentIndex = -1
-
-  constructor() {
-    this._currentIndex = 1
-    this.stack = []
-  }
-
-  get currentIndex() {
-    return this._currentIndex
-  }
+  historyStack: ChartListItem[][] = []
+  historyStackIndex = -1
 
   pushHisrory(chartList: ChartListItem[]) {
-    console.log('this', this)
-    this.stack.push(chartList)
-    this._currentIndex = this.stack.length - 1
+    this.historyStack.push(cloneDeep(chartList))
+    this.historyStackIndex = this.historyStack.length - 1
+    console.log('pushHisrory historyStack:', cloneDeep(this.historyStack))
   }
 
   undo() {
-    console.log('this', this)
-    if (this?._currentIndex > 0) {
-      this._currentIndex--
-      return this.stack[this._currentIndex]
+    if (this?.historyStackIndex > 0) {
+      this.historyStackIndex--
+      return this.historyStack[this.historyStackIndex]
     }
+    console.log('undo historyStack:', cloneDeep(this.historyStack))
 
     return null
   }
 
   redo() {
-    if (this && this._currentIndex < this.stack.length - 1) {
-      this._currentIndex++
-      return this.stack[this._currentIndex]
+    if (this && this.historyStackIndex < this.historyStack.length - 1) {
+      this.historyStackIndex++
+      return this.historyStack[this.historyStackIndex]
     }
 
     return null
@@ -179,7 +169,7 @@ export class ChartList extends HistoryStack {
       )
     }
 
-    this.pushHisrory(this.list)
+    super.pushHisrory(this.list)
   }
 
   // 通过id和位置移动图表
@@ -202,7 +192,7 @@ export class ChartList extends HistoryStack {
       // 判断新位置是否可以放置图表
       if (this.canDrop(newChartItem, otherChartList)) {
         this.updateChartList([...otherChartList, newChartItem])
-        this.pushHisrory(this.list)
+        super.pushHisrory(this.list)
         return true
       }
     }
@@ -260,7 +250,7 @@ export class ChartList extends HistoryStack {
       // 判断新位置是否可以放置图表
       if (newChartItem && this.canDrop(newChartItem, otherChartList)) {
         this.updateChartList([...otherChartList, newChartItem])
-        this.pushHisrory(this.list)
+        super.pushHisrory(this.list)
         return true
       }
     }
