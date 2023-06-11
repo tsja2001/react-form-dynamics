@@ -131,6 +131,12 @@ const DndV3 = () => {
   const dragChartDropFromDashboard = () => {
     const { dragStartPosition, drapEndPosition, chartData } = dragData.current
 
+    const targetChart = chartlist.current.findChartByPosition(drapEndPosition)
+    // 如果放下鼠标的位置有图表, 则用当前拖动的图表替换
+    if (targetChart) {
+      chartlist.current.updateChartDataByPosition(drapEndPosition, chartData)
+    }
+
     const distanceX = drapEndPosition[0] - dragStartPosition[0]
     const distanceY = drapEndPosition[1] - dragStartPosition[1]
 
@@ -177,7 +183,8 @@ const DndV3 = () => {
           </div>
         ))}
       </div>
-      <button>撤回</button>
+      <button onClick={chartlist.current.undo}>撤回</button>
+      <button  onClick={chartlist.current.redo}> 重做</button>
       <div>width: {dashboardSize.width}</div>
       <div>height: {dashboardSize.height}</div>
       <div

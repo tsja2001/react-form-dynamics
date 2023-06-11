@@ -1,3 +1,4 @@
+import { PicLeftOutlined } from '@ant-design/icons'
 import { DIRECTIONS } from './constant'
 import { IChartItem, IDirection } from './type'
 import { cloneDeep } from 'lodash'
@@ -28,12 +29,54 @@ export class ChartListItem implements IChartItem {
   }
 }
 
-export class ChartList {
+class HistoryStack {
+  stack: ChartListItem[][] = []
+  _currentIndex = -1
+
+  constructor() {
+    this._currentIndex = 1
+    this.stack = []
+  }
+
+  get currentIndex() {
+    return this._currentIndex
+  }
+
+  pushHisrory(chartList: ChartListItem[]) {
+    console.log('this', this)
+    this.stack.push(chartList)
+    this._currentIndex = this.stack.length - 1
+  }
+
+  undo() {
+    console.log('this', this)
+    if (this?._currentIndex > 0) {
+      this._currentIndex--
+      return this.stack[this._currentIndex]
+    }
+
+    return null
+  }
+
+  redo() {
+    if (this && this._currentIndex < this.stack.length - 1) {
+      this._currentIndex++
+      return this.stack[this._currentIndex]
+    }
+
+    return null
+  }
+}
+
+export class ChartList extends HistoryStack {
   constructor(
     public colCount: number,
     public rowCount: number,
+    // 存储图表的列表
     private list: ChartListItem[] = []
-  ) {}
+  ) {
+    super()
+  }
 
   // 传入dashboard的ref, 和当前鼠标的位置, 返回当前鼠标在第几行第几列
   getMousePosition(
@@ -61,13 +104,21 @@ export class ChartList {
   }
 
   // 增加新图表
-  addChart(item: ChartListItem) {
+  private addChart(item: ChartListItem) {
     this.list.push(item)
   }
 
   // 更新chartList
-  updateChartList(list: ChartListItem[]) {
+  private updateChartList(list: ChartListItem[]) {
     this.list = list
+  }
+
+  // 通过id更新图表chat数据
+  private updateChartById(id: string, chartData: any) {
+    const chartItem = this.findChartById(id)
+    if (chartItem) {
+      chartItem.chart = chartData
+    }
   }
 
   // 查找某个位置上的图表
@@ -117,7 +168,7 @@ export class ChartList {
   updateChartDataByPosition([col, row]: [number, number], chartData: any) {
     const chartItem = this.findChartByPosition([col, row])
     if (chartItem) {
-      chartItem.chart = chartData
+      this.updateChartById(chartItem.id, chartData)
     } else {
       this.addChart(
         new ChartListItem({
@@ -127,10 +178,15 @@ export class ChartList {
         })
       )
     }
+
+    this.pushHisrory(this.list)
   }
 
   // 通过id和位置移动图表
-  moveChartByIdAndPosition(chartId: string, [distanceX, distanceY]: [number, number]){
+  moveChartByIdAndPosition(
+    chartId: string,
+    [distanceX, distanceY]: [number, number]
+  ) {
     const chartItem = this.findChartById(chartId)
     if (chartItem) {
       const otherChartList = this.findOtherChartById(chartId)
@@ -146,11 +202,12 @@ export class ChartList {
       // 判断新位置是否可以放置图表
       if (this.canDrop(newChartItem, otherChartList)) {
         this.updateChartList([...otherChartList, newChartItem])
+        this.pushHisrory(this.list)
         return true
       }
     }
 
-    return false    
+    return false
   }
 
   // 通过id更新某个图表大小
@@ -203,6 +260,7 @@ export class ChartList {
       // 判断新位置是否可以放置图表
       if (newChartItem && this.canDrop(newChartItem, otherChartList)) {
         this.updateChartList([...otherChartList, newChartItem])
+        this.pushHisrory(this.list)
         return true
       }
     }
@@ -213,7 +271,12 @@ export class ChartList {
   // 判断chartList中是否可以放置当前chartItem
   canDrop(chartItem: ChartListItem, chartList: ChartListItem[] = this.list) {
     // 判断是否超出dashboard范围
-    if (chartItem.endCol > this.colCount || chartItem.endRow > this.rowCount) {
+    if (
+      chartItem.endCol >= this.colCount ||
+      chartItem.endRow >= this.rowCount ||
+      chartItem.startCol < 0 ||
+      chartItem.startRow < 0
+    ) {
       return false
     }
 
@@ -259,5 +322,23 @@ export class ChartList {
     }
 
     return false
+  }
+
+  // 撤回
+  undo() {
+    const res = super.undo()
+    if (res) {
+      this.updateChartList(res)
+    }
+    return res ?? null
+  }
+
+  // 重做
+  redo() {
+    const res = super.redo()
+    if (res) {
+      this.updateChartList(res)
+    }
+    return res ?? null
   }
 }
