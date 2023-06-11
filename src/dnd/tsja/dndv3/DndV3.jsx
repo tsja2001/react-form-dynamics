@@ -1,24 +1,13 @@
 /* eslint-disable no-unused-vars */
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
+
 import style from './DndV3.module.scss'
-import { chartDataList } from './chartDataList'
 import { DASHBOARD_SIZE, DRAG_TYPE } from './constant'
-import {
-  DashboardChartItem,
-  checkElementOverlap,
-  deleteChartAtPosition,
-  deleteChartById,
-  getChartAtPosition,
-  getChartAtStartPoint,
-  getColAndRow,
-  isChartOutDashboard,
-  resizeChart,
-  updateChartAtPosition,
-} from './utils/checkElementOverlap'
+import { chartDataList } from './chartDataList'
 import useDimensions from '../../../hock/useDimensions'
-import { DragBar } from './component/dragBar/DragBar'
-import { ChartList, ChartListItem } from './chartList'
 import useForceUpdate from '../../../hock/useForceUpdate'
+import { DragBar } from './component/dragBar/DragBar'
+import { ChartList } from './chartList'
 
 const DndV3 = () => {
   // 渲染的数据列表
@@ -45,19 +34,11 @@ const DndV3 = () => {
     // 拖拽的方向 up | left | down | right
     direction: null,
   })
-  // 鼠标从dashboard中开始拖拽时, 鼠标所在的位置(用于拖动长或者宽大大于1的元素时, 记录鼠标位置)
-  const dragStartPoint = useRef(null)
-  // 当前鼠标拖动的元素, 要放置的目标索引
-  const dropPosition = useRef(null)
-  // 当拖动item时调整位置时, 记录当前拖动的元素位置, 用于拖动结束后删除元素
-  const dragItemPosition = useRef(null)
-  // 记录要调整元素大小的调整方向
-  const resizeDirection = useRef(null)
-
   const forceUpdate = useForceUpdate()
 
   // 从list中选择图表拖动
   const dragChartStartFromList = (event, data) => {
+    event.stopPropagation()
     dragData.current = { chartData: data, type: DRAG_TYPE.FROM_LIST }
   }
 
@@ -88,13 +69,6 @@ const DndV3 = () => {
       [event.clientX, event.clientY]
     )
 
-    // console.log('mousePosintion', mousePosintion)
-
-    // console.log(
-    //   'chartlist.current.findChartByPosition(mousePosintion),',
-    //   chartlist.current.findChartByPosition(mousePosintion)
-    // )
-
     dragData.current = {
       type: DRAG_TYPE.RESIZE,
       dragStartPosition: mousePosintion,
@@ -105,11 +79,9 @@ const DndV3 = () => {
   }
 
   // 鼠标拖动路过元素
-  const dragOver = (event, index) => {
+  const dragOver = (event) => {
     event.preventDefault()
     event.stopPropagation()
-
-    // todo 拖动过程中, 鼠标移动到其他元素上, 会触发多次, 需要优化'
 
     // 获取鼠标当前位置[col, row]
     const mousePosintion = chartlist.current.getMousePosition(
@@ -128,16 +100,16 @@ const DndV3 = () => {
     dragData.current.isDroped = true
 
     switch (type) {
+      // 从列表中拖动
       case DRAG_TYPE.FROM_LIST:
-        // 从列表中拖动
         dragChartDropFromList()
         break
+      // 从dashboard中拖动
       case DRAG_TYPE.FROM_DASHBOARD:
-        // 从dashboard中拖动
         dragChartDropFromDashboard()
         break
+      // 调整大小
       case DRAG_TYPE.RESIZE:
-        // 调整大小
         resizeChartDropFromDragBar()
         break
     }
@@ -157,11 +129,15 @@ const DndV3 = () => {
 
   // 从dashboard中拖动, 放下鼠标时的逻辑
   const dragChartDropFromDashboard = () => {
-    const { drapEndPosition, chartData } = dragData.current
-    const success = chartlist.current.updateChartPositionById(
-      chartData.id,
-      drapEndPosition
-    )
+    const { dragStartPosition, drapEndPosition, chartData } = dragData.current
+
+    const distanceX = drapEndPosition[0] - dragStartPosition[0]
+    const distanceY = drapEndPosition[1] - dragStartPosition[1]
+
+    const success = chartlist.current.moveChartByIdAndPosition(chartData.id, [
+      distanceX,
+      distanceY,
+    ])
     if (!success) {
       console.log('拖动失败')
     }
@@ -220,7 +196,7 @@ const DndV3 = () => {
                   // 松开鼠标, 放下元素
                   onDrop={chartChartDrop}
                   // 路过元素, 记录位置
-                  onDragOver={(event) => dragOver(event, [colIndex, rowIndex])}
+                  onDragOver={dragOver}
                   className={style.gridItem}
                   key={`${rowIndex}-${colIndex}`}
                   onClick={() => {

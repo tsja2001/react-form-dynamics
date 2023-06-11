@@ -113,7 +113,7 @@ export class ChartList {
     return this.list.filter((item) => item.id !== id)
   }
 
-  // 图表数据, 若不存在则添加
+  // 更新图表数据, 若不存在则添加
   updateChartDataByPosition([col, row]: [number, number], chartData: any) {
     const chartItem = this.findChartByPosition([col, row])
     if (chartItem) {
@@ -129,22 +129,18 @@ export class ChartList {
     }
   }
 
-  // 通过id更新某个图表位置
-  updateChartPositionById(
-    chartId: string,
-    [newCol, newRow]: [number, number]
-  ): boolean {
+  // 通过id和位置移动图表
+  moveChartByIdAndPosition(chartId: string, [distanceX, distanceY]: [number, number]){
     const chartItem = this.findChartById(chartId)
-
     if (chartItem) {
       const otherChartList = this.findOtherChartById(chartId)
 
       const newChartItem = new ChartListItem({
         ...chartItem,
-        startCol: newCol,
-        startRow: newRow,
-        endCol: newCol + chartItem.width - 1,
-        endRow: newRow + chartItem.height - 1,
+        startCol: chartItem.startCol + distanceX,
+        startRow: chartItem.startRow + distanceY,
+        endCol: chartItem.endCol + distanceX,
+        endRow: chartItem.endRow + distanceY,
       })
 
       // 判断新位置是否可以放置图表
@@ -154,7 +150,7 @@ export class ChartList {
       }
     }
 
-    return false
+    return false    
   }
 
   // 通过id更新某个图表大小
