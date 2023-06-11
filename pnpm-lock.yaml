@@ -43,6 +43,9 @@ dependencies:
     version: 1.62.1
 
 devDependencies:
+  '@types/lodash':
+    specifier: ^4.14.195
+    version: 4.14.195
   '@types/react':
     specifier: ^18.0.28
     version: 18.2.6
@@ -64,6 +67,9 @@ devDependencies:
   eslint-plugin-react-refresh:
     specifier: ^0.3.4
     version: 0.3.5(eslint@8.41.0)
+  lodash:
+    specifier: ^4.17.21
+    version: 4.17.21
   tailwindcss:
     specifier: ^3.3.2
     version: 3.3.2
@@ -1779,6 +1785,10 @@ packages:
     resolution: {integrity: sha512-aLkWa0C0vO5b4Sr798E26QgOkss68Un0bLjs7u9qxzPT5CG+8DuNTffWES58YzJs3hrVAOs1wonycqEBqNJubA==}
     dev: false
 
+  /@types/lodash@4.14.195:
+    resolution: {integrity: sha512-Hwx9EUgdwf2GLarOjQp5ZH8ZmblzcbTBC2wtQWNKARBSxM9ezRIAUpeDTgoQRAFB0+8CNWXVA9+MaSOzOF3nPg==}
+    dev: true
+
   /@types/mapbox-gl@1.13.6:
     resolution: {integrity: sha512-CONmQCVgzLOseiDa0s8EXwgc3z9FQcc8U/KsIBiaNBY1sIxPen14k9z3eMeYgpx1vo7k0cq9xxxk3/xSZkW0TQ==}
     dependencies:
@@ -3402,7 +3412,6 @@ packages:
 
   /lodash@4.17.21:
     resolution: {integrity: sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==}
-    dev: false
 
   /longest@1.0.1:
     resolution: {integrity: sha512-k+yt5n3l48JU4k8ftnKG6V7u32wyH2NfKzeMto9F/QRE0amxy/LayxwlvjjkZEIzqR+19IrtFO8p5kB9QaYUFg==}

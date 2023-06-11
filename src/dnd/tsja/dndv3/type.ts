@@ -8,3 +8,5 @@ export interface IChartItem {
   endRow: number
   readonly id: string
 }
+
+export type IDirection = 'left' | 'right' | 'top' | 'bottom'

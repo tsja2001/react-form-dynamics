@@ -20,7 +20,7 @@ import { DragBar } from './component/dragBar/DragBar'
 import { ChartList, ChartListItem } from './chartList'
 import useForceUpdate from '../../../hock/useForceUpdate'
 
-const DndV2 = () => {
+const DndV3 = () => {
   // 渲染的数据列表
   const chartlist = useRef(new ChartList(5, 3))
   // 整个图表的ref
@@ -54,7 +54,7 @@ const DndV2 = () => {
   // 记录要调整元素大小的调整方向
   const resizeDirection = useRef(null)
 
-  const forseUpdate = useForceUpdate()
+  const forceUpdate = useForceUpdate()
 
   // 从list中选择图表拖动
   const dragChartStartFromList = (event, data) => {
@@ -62,15 +62,54 @@ const DndV2 = () => {
   }
 
   // 从dashboard的item拖动以调整位置
-  const dragChartStartFromDashboard = (event, [col, row]) => {}
+  const dragChartStartFromDashboard = (event) => {
+    // 获取鼠标当前位置[col, row]
+    const mousePosintion = chartlist.current.getMousePosition(
+      dashboardRef.current,
+      [event.clientX, event.clientY]
+    )
 
-  // 从dashboard的dragBar拖动以调整大小 (todo考虑和拖动调整位置合并)
-  const dragResizeStartFromDragBar = (event, [col, row], position) => {}
+    dragData.current = {
+      type: DRAG_TYPE.FROM_DASHBOARD,
+      dragStartPosition: mousePosintion,
+      drapEndPosition: mousePosintion,
+      chartData: chartlist.current.findChartByPosition(mousePosintion),
+    }
+  }
+
+  // 从dashboard的dragBar拖动以调整大小
+  const dragResizeStartFromDragBar = (event, direction) => {
+    // 阻止冒泡, 避免触发dashboard的拖动事件
+    event.stopPropagation()
+
+    // 获取鼠标当前位置[col, row]
+    const mousePosintion = chartlist.current.getMousePosition(
+      dashboardRef.current,
+      [event.clientX, event.clientY]
+    )
+
+    // console.log('mousePosintion', mousePosintion)
+
+    // console.log(
+    //   'chartlist.current.findChartByPosition(mousePosintion),',
+    //   chartlist.current.findChartByPosition(mousePosintion)
+    // )
+
+    dragData.current = {
+      type: DRAG_TYPE.RESIZE,
+      dragStartPosition: mousePosintion,
+      drapEndPosition: mousePosintion,
+      direction,
+      chartData: chartlist.current.findChartByPosition(mousePosintion),
+    }
+  }
 
   // 鼠标拖动路过元素
   const dragOver = (event, index) => {
     event.preventDefault()
     event.stopPropagation()
+
+    // todo 拖动过程中, 鼠标移动到其他元素上, 会触发多次, 需要优化'
 
     // 获取鼠标当前位置[col, row]
     const mousePosintion = chartlist.current.getMousePosition(
@@ -91,23 +130,60 @@ const DndV2 = () => {
     switch (type) {
       case DRAG_TYPE.FROM_LIST:
         // 从列表中拖动
-        dragChartDropFromList(event)
+        dragChartDropFromList()
+        break
+      case DRAG_TYPE.FROM_DASHBOARD:
+        // 从dashboard中拖动
+        dragChartDropFromDashboard()
+        break
+      case DRAG_TYPE.RESIZE:
+        // 调整大小
+        resizeChartDropFromDragBar()
+        break
     }
 
     dragData.current = null
-    forseUpdate()
+
+    setTimeout(() => {
+      forceUpdate()
+    })
   }
 
   // 从列表中拖动图表到dashboard, 放下鼠标时的逻辑
   const dragChartDropFromList = () => {
-    // todo修改为更新图表逻辑
-    const chartItem = new ChartListItem({
-      chart: dragData.current.chartData,
-      startCol: dragData.current.drapEndPosition[0],
-      startRow: dragData.current.drapEndPosition[1],
-    })
+    const { drapEndPosition, chartData } = dragData.current
+    chartlist.current.updateChartDataByPosition(drapEndPosition, chartData)
+  }
 
-    chartlist.current.addChart(chartItem)
+  // 从dashboard中拖动, 放下鼠标时的逻辑
+  const dragChartDropFromDashboard = () => {
+    const { drapEndPosition, chartData } = dragData.current
+    const success = chartlist.current.updateChartPositionById(
+      chartData.id,
+      drapEndPosition
+    )
+    if (!success) {
+      console.log('拖动失败')
+    }
+  }
+
+  // 调整大小, 放下鼠标时的逻辑
+  const resizeChartDropFromDragBar = () => {
+    const { dragStartPosition, drapEndPosition, chartData, direction } =
+      dragData.current
+
+    // 获取拖动的距离
+    const distanceX = drapEndPosition[0] - dragStartPosition[0]
+    const distanceY = drapEndPosition[1] - dragStartPosition[1]
+
+    const success = chartlist.current.updateChartSizeById(
+      chartData.id,
+      [distanceX, distanceY],
+      direction
+    )
+    if (!success) {
+      console.log('大小调整失败')
+    }
   }
 
   return (
@@ -153,7 +229,7 @@ const DndV2 = () => {
                   }}
                 >
                   {(() => {
-                    const chartItem = chartlist.current.findChartByPosition([
+                    const chartItem = chartlist.current.findChartByStartPoint([
                       colIndex,
                       rowIndex,
                     ])
@@ -173,22 +249,15 @@ const DndV2 = () => {
                                 chartItem.height ?? 'auto',
                           }}
                           // 拖拽item调整位置
-                          // onDragStart={(event) =>
-                          //   dragChartStartFromDashboard(event, [
-                          //     colIndex,
-                          //     rowIndex,
-                          //   ])
-                          // }
+                          onDragStart={(event) =>
+                            dragChartStartFromDashboard(event)
+                          }
                         >
-                          {/* <DragBar
+                          <DragBar
                             onDragStart={(domEvent, direction) => {
-                              dragResizeStartFromDragBar(
-                                domEvent,
-                                [colIndex, rowIndex],
-                                direction
-                              )
+                              dragResizeStartFromDragBar(domEvent, direction)
                             }}
-                          /> */}
+                          />
                           {chartItem.chart.chart}
                         </div>
                       )
@@ -204,4 +273,4 @@ const DndV2 = () => {
   )
 }
 
-export default DndV2
+export default DndV3
