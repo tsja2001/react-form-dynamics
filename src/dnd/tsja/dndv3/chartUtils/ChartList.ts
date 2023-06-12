@@ -101,7 +101,6 @@ export class ChartList extends HistoryStack<ChartListItem[]> {
   // 更新图表数据, 若不存在则添加
   updateChartDataByPosition([col, row]: [number, number], chartData: any) {
     const chartItem = this.findChartByPosition([col, row])
-    console.log('chartItem', chartItem)
     if (chartItem) {
       this.updateChartById(chartItem.id, chartData)
     } else {

@@ -8,6 +8,7 @@ import useDimensions from '../../../hock/useDimensions'
 import useForceUpdate from '../../../hock/useForceUpdate'
 import { DragBar } from './component/dragBar/DragBar'
 import { ChartList } from './chartUtils/ChartList'
+import Delete from './component/delete/Delete'
 
 const DndV3 = () => {
   // 渲染的数据列表
@@ -135,7 +136,10 @@ const DndV3 = () => {
 
     if (targetChart && targetChart.id !== chartData.id) {
       // 如果放下鼠标的位置的有图表, 且和拖动的图表不是同一个, 则直接替换
-      chartlist.current.updateChartDataByPosition(drapEndPosition, chartData.chart)
+      chartlist.current.updateChartDataByPosition(
+        drapEndPosition,
+        chartData.chart
+      )
       chartlist.current.deleteChartById(chartData.id)
     } else {
       // 如果放下鼠标的位置没有图表, 则移动图表
@@ -171,6 +175,22 @@ const DndV3 = () => {
     }
   }
 
+  // 拖拽元素到删除区域
+  const onDrogDelete = () => {
+    const { type } = dragData.current
+    dragData.current.isDroped = true
+
+    if (type === DRAG_TYPE.FROM_DASHBOARD) {
+      chartlist.current.deleteChartById(dragData.current?.chartData?.id)
+    }
+
+    dragData.current = null
+
+    setTimeout(() => {
+      forceUpdate()
+    })
+  }
+
   return (
     <div className={style.content}>
       <div className={style.chartList}>
@@ -202,8 +222,7 @@ const DndV3 = () => {
       >
         重做
       </button>
-      <div>width: {dashboardSize.width}</div>
-      <div>height: {dashboardSize.height}</div>
+      <Delete onDrogDelete={onDrogDelete}></Delete>
       <div
         className={style.dashboardWrap}
         ref={dashboardRef}
