@@ -6,7 +6,7 @@ export const DIRECTIONS = {
 }
 
 // 行数, 列数
-export const DASHBOARD_SIZE = [5, 3]
+export const DASHBOARD_SIZE = [8, 6]
 
 // 拖拽类型
 // fromList 从预览列表中拉取

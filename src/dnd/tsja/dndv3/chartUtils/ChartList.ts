@@ -1,64 +1,8 @@
-import { DIRECTIONS } from './constant'
-import { IChartItem } from './type'
-import { cloneDeep } from 'lodash'
+import { DIRECTIONS } from '../constant'
+import { ChartListItem } from './ChartListItem'
+import { HistoryStack } from './HistoryStack'
 
-export class ChartListItem implements IChartItem {
-  private static generateId(): string {
-    return Math.random().toString(36).slice(2)
-  }
-
-  chart: any
-  width: number
-  height: number
-  startCol: number
-  startRow: number
-  endCol: number
-  endRow: number
-  id: string
-
-  constructor(props: Partial<IChartItem>) {
-    this.chart = props.chart
-    this.width = props.width ?? 1
-    this.height = props.height ?? 1
-    this.startCol = props.startCol ?? 0
-    this.startRow = props.startRow ?? 0
-    this.endCol = props.endCol ?? this.startCol + this.width - 1
-    this.endRow = props.endRow ?? this.startRow + this.height - 1
-    this.id = props.id ?? ChartListItem.generateId()
-  }
-}
-
-class HistoryStack {
-  historyStack: ChartListItem[][] = []
-  historyStackIndex = -1
-
-  pushHisrory(chartList: ChartListItem[]) {
-    this.historyStack.push(cloneDeep(chartList))
-    this.historyStackIndex = this.historyStack.length - 1
-    console.log('pushHisrory historyStack:', cloneDeep(this.historyStack))
-  }
-
-  undo() {
-    if (this?.historyStackIndex > 0) {
-      this.historyStackIndex--
-      return this.historyStack[this.historyStackIndex]
-    }
-    console.log('undo historyStack:', cloneDeep(this.historyStack))
-
-    return null
-  }
-
-  redo() {
-    if (this && this.historyStackIndex < this.historyStack.length - 1) {
-      this.historyStackIndex++
-      return this.historyStack[this.historyStackIndex]
-    }
-
-    return null
-  }
-}
-
-export class ChartList extends HistoryStack {
+export class ChartList extends HistoryStack<ChartListItem[]> {
   constructor(
     public colCount: number,
     public rowCount: number,
@@ -157,6 +101,7 @@ export class ChartList extends HistoryStack {
   // 更新图表数据, 若不存在则添加
   updateChartDataByPosition([col, row]: [number, number], chartData: any) {
     const chartItem = this.findChartByPosition([col, row])
+    console.log('chartItem', chartItem)
     if (chartItem) {
       this.updateChartById(chartItem.id, chartData)
     } else {
@@ -314,21 +259,26 @@ export class ChartList extends HistoryStack {
     return false
   }
 
+  // 删除某个图表
+  deleteChartById(chartId: string) {
+    const chartItem = this.findChartById(chartId)
+    if (chartItem) {
+      this.updateChartList(this.list.filter((item) => item.id !== chartId))
+      super.pushHisrory(this.list)
+    }
+  }
+
   // 撤回
   undo() {
-    const res = super.undo()
-    if (res) {
-      this.updateChartList(res)
-    }
-    return res ?? null
+    const res = super.undo() ?? []
+    this.updateChartList(res)
+    return res
   }
 
   // 重做
   redo() {
-    const res = super.redo()
-    if (res) {
-      this.updateChartList(res)
-    }
-    return res ?? null
+    const res = super.redo() ?? []
+    this.updateChartList(res)
+    return res
   }
 }

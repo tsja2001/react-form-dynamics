@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { useRef } from 'react'
+import { memo, useRef } from 'react'
 
 import style from './DndV3.module.scss'
 import { DASHBOARD_SIZE, DRAG_TYPE } from './constant'
@@ -7,11 +7,11 @@ import { chartDataList } from './chartDataList'
 import useDimensions from '../../../hock/useDimensions'
 import useForceUpdate from '../../../hock/useForceUpdate'
 import { DragBar } from './component/dragBar/DragBar'
-import { ChartList } from './chartList'
+import { ChartList } from './chartUtils/ChartList'
 
 const DndV3 = () => {
   // 渲染的数据列表
-  const chartlist = useRef(new ChartList(5, 3))
+  const chartlist = useRef(new ChartList(DASHBOARD_SIZE[0], DASHBOARD_SIZE[1]))
   // 整个图表的ref
   const dashboardRef = useRef(null)
   // 整个dashboard图表的宽高
@@ -132,20 +132,23 @@ const DndV3 = () => {
     const { dragStartPosition, drapEndPosition, chartData } = dragData.current
 
     const targetChart = chartlist.current.findChartByPosition(drapEndPosition)
-    // 如果放下鼠标的位置有图表, 则用当前拖动的图表替换
-    if (targetChart) {
-      chartlist.current.updateChartDataByPosition(drapEndPosition, chartData)
-    }
 
-    const distanceX = drapEndPosition[0] - dragStartPosition[0]
-    const distanceY = drapEndPosition[1] - dragStartPosition[1]
+    if (targetChart && targetChart.id !== chartData.id) {
+      // 如果放下鼠标的位置的有图表, 且和拖动的图表不是同一个, 则直接替换
+      chartlist.current.updateChartDataByPosition(drapEndPosition, chartData.chart)
+      chartlist.current.deleteChartById(chartData.id)
+    } else {
+      // 如果放下鼠标的位置没有图表, 则移动图表
+      const distanceX = drapEndPosition[0] - dragStartPosition[0]
+      const distanceY = drapEndPosition[1] - dragStartPosition[1]
 
-    const success = chartlist.current.moveChartByIdAndPosition(chartData.id, [
-      distanceX,
-      distanceY,
-    ])
-    if (!success) {
-      console.log('拖动失败')
+      const success = chartlist.current.moveChartByIdAndPosition(chartData.id, [
+        distanceX,
+        distanceY,
+      ])
+      if (!success) {
+        console.log('拖动失败')
+      }
     }
   }
 
@@ -220,10 +223,6 @@ const DndV3 = () => {
                   onDragOver={dragOver}
                   className={style.gridItem}
                   key={`${rowIndex}-${colIndex}`}
-                  onClick={() => {
-                    console.log('dragData.current', dragData.current)
-                    console.log('chartlist.current', chartlist.current)
-                  }}
                 >
                   {(() => {
                     const chartItem = chartlist.current.findChartByStartPoint([
@@ -270,4 +269,4 @@ const DndV3 = () => {
   )
 }
 
-export default DndV3
+export default memo(DndV3)

@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="EeSAo4yaw5Sp_afLqSVQ" name="第 1 页">
-        <mxGraphModel dx="-96" dy="316" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="226" dy="653" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -208,9 +208,9 @@
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
                 <mxCell id="116" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="2490" y="774" width="850" height="280" as="geometry"/>
+                    <mxGeometry x="2490" y="774" width="850" height="346" as="geometry"/>
                 </mxCell>
-                <mxCell id="118" value="拖动的几种情况(V2.0准备重构)" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                <mxCell id="118" value="拖动的几种情况(V3准备重构)" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="2620" y="260" width="600" height="60" as="geometry"/>
                 </mxCell>
                 <mxCell id="119" value="从List预览列表中,&lt;br&gt;拖动元素到dashboard中" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
@@ -308,20 +308,8 @@
                         <mxPoint x="2683.3288220643176" y="905.0841696579002" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="221" style="edgeStyle=none;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="1" source="227" target="220" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="229" style="edgeStyle=none;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="187" target="227" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
                 <mxCell id="187" value="松开鼠标的位置,&lt;br&gt;没有元素则直接放置元素,&lt;br&gt;有元素则将此元素chat数据更新为&lt;span style=&quot;text-align: left;&quot;&gt;dragData.&lt;/span&gt;&lt;span style=&quot;text-align: left;&quot;&gt;chartData.chart&lt;br&gt;(位置及大小数据不改变)&lt;br&gt;&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="2587" y="884" width="193" height="80" as="geometry"/>
-                </mxCell>
-                <mxCell id="192" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.475;entryY=-0.02;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="175" target="202" edge="1">
-                    <mxGeometry width="50" height="50" relative="1" as="geometry">
-                        <mxPoint x="2695.45" y="862.7999999999997" as="sourcePoint"/>
-                        <mxPoint x="2919" y="884" as="targetPoint"/>
-                    </mxGeometry>
                 </mxCell>
                 <mxCell id="195" style="edgeStyle=none;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" edge="1">
                     <mxGeometry relative="1" as="geometry">
@@ -338,50 +326,56 @@
                         <mxPoint x="3007" y="940" as="sourcePoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="217" style="edgeStyle=none;html=1;entryX=0.224;entryY=-0.025;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="202" target="216" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="202" value="&lt;span style=&quot;text-align: left;&quot;&gt;深拷贝chartList, 更新其中拖动图表的位置&lt;br&gt;&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="2822" y="884" width="193" height="80" as="geometry"/>
-                </mxCell>
-                <mxCell id="218" style="edgeStyle=none;html=1;entryX=0.766;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="210" target="216" edge="1">
-                    <mxGeometry relative="1" as="geometry"/>
-                </mxCell>
-                <mxCell id="210" value="&lt;span style=&quot;text-align: left;&quot;&gt;深拷贝chartList, 更新其中调整大小图表的位置&lt;br&gt;&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="3053.5" y="884" width="193" height="80" as="geometry"/>
-                </mxCell>
-                <mxCell id="214" value="" style="endArrow=classic;html=1;exitX=0.9;exitY=1.017;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="175" target="210" edge="1">
-                    <mxGeometry width="50" height="50" relative="1" as="geometry">
-                        <mxPoint x="3150" y="854" as="sourcePoint"/>
-                        <mxPoint x="3150" y="884" as="targetPoint"/>
-                    </mxGeometry>
-                </mxCell>
-                <mxCell id="216" value="&lt;span style=&quot;text-align: left;&quot;&gt;判定不重叠. 不越界, 则更新&lt;/span&gt;&lt;span style=&quot;text-align: left;&quot;&gt;chartList&lt;/span&gt;&lt;span style=&quot;text-align: left;&quot;&gt;&lt;br&gt;&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="2822" y="992.82" width="428" height="40" as="geometry"/>
-                </mxCell>
                 <mxCell id="220" value="完成从list拖入dashboard逻辑&lt;span style=&quot;text-align: left;&quot;&gt;&lt;br&gt;&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="2587" y="1084" width="193" height="80" as="geometry"/>
+                    <mxGeometry x="2587" y="1225" width="193" height="80" as="geometry"/>
                 </mxCell>
                 <mxCell id="222" value="完成拖动调整位置逻辑&lt;span style=&quot;text-align: left;&quot;&gt;&lt;br&gt;&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="2823.5" y="1084" width="193" height="80" as="geometry"/>
-                </mxCell>
-                <mxCell id="223" value="" style="endArrow=classic;html=1;exitX=0.227;exitY=1.038;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="216" target="222" edge="1">
-                    <mxGeometry width="50" height="50" relative="1" as="geometry">
-                        <mxPoint x="2920" y="1174" as="sourcePoint"/>
-                        <mxPoint x="2970" y="1124" as="targetPoint"/>
-                    </mxGeometry>
+                    <mxGeometry x="2826.5" y="1225" width="193" height="80" as="geometry"/>
                 </mxCell>
                 <mxCell id="224" value="完成大小修改逻辑" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="3057" y="1084" width="193" height="80" as="geometry"/>
+                    <mxGeometry x="3060" y="1225" width="193" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="225" value="" style="endArrow=classic;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.773;exitY=1.013;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="216" target="224" edge="1">
+                <mxCell id="230" value="" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="2570" y="980" width="690" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="227" value="&lt;span style=&quot;text-align: left;&quot;&gt;更新chartList&lt;br&gt;&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="2587" y="992.82" width="213" height="47.18" as="geometry"/>
+                </mxCell>
+                <mxCell id="216" value="&lt;span style=&quot;text-align: left;&quot;&gt;判定不重叠. 不越界, 则更新&lt;/span&gt;&lt;span style=&quot;text-align: left;&quot;&gt;chartList&lt;/span&gt;&lt;span style=&quot;text-align: left;&quot;&gt;&lt;br&gt;&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="2810" y="992.82" width="438" height="47.18" as="geometry"/>
+                </mxCell>
+                <mxCell id="225" value="" style="endArrow=classic;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.849;exitY=1.01;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="230" target="224" edge="1">
                     <mxGeometry width="50" height="50" relative="1" as="geometry">
                         <mxPoint x="3140" y="1084" as="sourcePoint"/>
                         <mxPoint x="3203.5" y="1124" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="227" value="&lt;span style=&quot;text-align: left;&quot;&gt;更新chartList&lt;br&gt;&lt;/span&gt;" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="2587" y="992.82" width="193" height="40" as="geometry"/>
+                <mxCell id="223" value="" style="endArrow=classic;html=1;exitX=0.511;exitY=1.018;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="230" target="222" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="2920" y="1174" as="sourcePoint"/>
+                        <mxPoint x="2970" y="1124" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="221" style="edgeStyle=none;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;exitX=0.165;exitY=1.027;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="230" target="220" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="229" style="edgeStyle=none;html=1;entryX=0.435;entryY=0.008;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="187" target="227" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="192" value="" style="endArrow=classic;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.25;entryY=0;entryDx=0;entryDy=0;" parent="1" source="175" target="216" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="2695.45" y="862.7999999999997" as="sourcePoint"/>
+                        <mxPoint x="2913.675" y="882.4000000000001" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="214" value="" style="endArrow=classic;html=1;exitX=0.9;exitY=1.017;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.779;entryY=-0.017;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="175" edge="1" target="216">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="3150" y="854" as="sourcePoint"/>
+                        <mxPoint x="3150" y="884" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="231" value="记录每次chartList更新的深拷贝快照, 用于实现撤回重做功能" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="2587" y="1050" width="663" height="40" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>

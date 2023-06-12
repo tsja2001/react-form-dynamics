@@ -115,9 +115,6 @@ const DndV2 = () => {
 
       // 如果是拖动item调整位置
       if (dragItemPosition.current) {
-        // todo 优化掉dragItemPosition变量
-        console.log(dragItemPosition.current)
-        console.log(dragData.current)
         // 判读拖动item是否在原位置, 如果不在, 删除原位置的元素
         if (
           dragItemPosition.current[0] !== dropPosition.current[0] ||
