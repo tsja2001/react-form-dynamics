@@ -280,4 +280,25 @@ export class ChartList extends HistoryStack<ChartListItem[]> {
     this.updateChartList(res)
     return res
   }
+
+  // 生成可序列化的数据
+  getSerializableData() {
+    const res = {
+      colCount: this.colCount,
+      rowCount: this.rowCount,
+    }
+
+    const list = this.list.map((item) => {
+      const { id, startCol, startRow, endCol, endRow, chart } = item
+      return {
+        id,
+        startCol,
+        startRow,
+        endCol,
+        endRow,
+        chartDataId: chart.id,
+      }
+    })
+
+  }
 }
