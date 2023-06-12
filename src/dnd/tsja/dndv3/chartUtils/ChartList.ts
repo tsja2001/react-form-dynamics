@@ -283,11 +283,6 @@ export class ChartList extends HistoryStack<ChartListItem[]> {
 
   // 生成可序列化的数据
   getSerializableData() {
-    const res = {
-      colCount: this.colCount,
-      rowCount: this.rowCount,
-    }
-
     const list = this.list.map((item) => {
       const { id, startCol, startRow, endCol, endRow, chart } = item
       return {
@@ -300,5 +295,10 @@ export class ChartList extends HistoryStack<ChartListItem[]> {
       }
     })
 
+    return {
+      list,
+      colCount: this.colCount,
+      rowCount: this.rowCount,
+    }
   }
 }
